@@ -8,5 +8,5 @@ import { RouterOutlet } from '@angular/router';
   styleUrl: './app.component.css'
 })
 export class AppComponent {
-  title = '202612-MISW4204-FrontEnd-Grupo14';
+  title = 'GestorApp';
 }
