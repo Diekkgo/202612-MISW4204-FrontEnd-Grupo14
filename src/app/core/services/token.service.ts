@@ -6,7 +6,7 @@ import { Router } from '@angular/router';
 })
 export class TokenService {
 
-  private readonly TOKEN_KEY = 'id_token';
+  private readonly TOKEN_KEY = 'jwt_token';
   private router = inject(Router);
 
   getToken(): string | null {
