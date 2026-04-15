@@ -4,47 +4,45 @@
 
 La estructura del proyecto se compone de la siguiente manera:
 
-```bash
+```text
 src/
-│
 ├── app/
 │   ├── core/                     # Servicios globales (singleton)
 │   │   ├── services/
-│   │   │   ├── token.service.ts
+│   │   │   └── token.service.ts
 │   │   ├── interceptors/
-│   │   │   ├── auth.interceptor.ts
+│   │   │   └── auth.interceptor.ts
 │   │   ├── guards/
-│   │   │   ├── auth.guard.ts
+│   │   │   └── auth.guard.ts
 │   │   ├── models/
-│   │   ├── utils/
+│   │   └── utils/
 │   │
 │   ├── shared/                  # Reutilizable en toda la app
 │   │   ├── components/
 │   │   │   ├── button/
-│   │   │   ├── modal/
+│   │   │   └── modal/
 │   │   ├── directives/
-│   │   ├── pipes/
+│   │   └── pipes/
 │   │
 │   ├── features/
 │   │   ├── auth/
 │   │   │   ├── pages/
-│   │   │   │   ├── login/
+│   │   │   │   └── login/
 │   │   │   ├── services/
 │   │   │   ├── models/
-│   │   │   ├── auth.routes.ts
+│   │   │   └── auth.routes.ts
 │   │   │
 │   │   ├── dashboard/
 │   │   │   ├── pages/
 │   │   │   ├── services/
 │   │   │   ├── models/
-│   │   │   ├── dashboard.routes.ts
+│   │   │   └── dashboard.routes.ts
 │   │   │
-│   │   ├── users/
-│   │   │   ├── pages/
-│   │   │   ├── services/
-│   │   │   ├── models/
-│   │   │   ├── users.routes.ts
-│   │
+│   │   └── users/
+│   │       ├── pages/
+│   │       ├── services/
+│   │       ├── models/
+│   │       └── users.routes.ts
 │   │
 │   ├── app.routes.ts            # Rutas principales
 │   ├── app.config.ts            # Config standalone
@@ -52,12 +50,11 @@ src/
 │
 ├── assets/
 │   ├── images/
-│   ├── icons/
+│   └── icons/
 │
 ├── environments/
 │   ├── environment.ts
-│   ├── environment.prod.ts
-│
+│   └── environment.prod.ts
 │
 ├── index.html
 ├── main.ts
