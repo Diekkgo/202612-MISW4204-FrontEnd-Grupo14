@@ -4,6 +4,7 @@
 
 La estructura del proyecto se compone de la siguiente manera:
 
+```bash
 src/
 │
 ├── app/
@@ -61,3 +62,4 @@ src/
 ├── index.html
 ├── main.ts
 └── styles.scss
+```
