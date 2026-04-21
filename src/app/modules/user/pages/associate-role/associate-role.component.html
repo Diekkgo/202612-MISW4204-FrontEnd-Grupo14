@@ -1,0 +1,41 @@
+<div class="container-sm">
+  <form [formGroup]="roleForm" (ngSubmit)="onSubmit()">
+    <h1 class="text-center my-5">Asociar Roles</h1>
+
+    <div class="col-12">
+      <label for="" class="form-label d-block">Roles</label>
+
+      <div
+        class="roles-wrapper p-3 rounded border"
+        [class.border-danger]="roleForm.errors?.['noRoleSelected'] && submitted"
+        [class.border-success]="!roleForm.errors?.['noRoleSelected'] && submitted"
+      >
+        <div formArrayName="roles" class="row">
+          <div class="col-md-4" *ngFor="let role of availableRoles; let i = index">
+            <div class="form-check">
+              <input
+                class="form-check-input"
+                type="checkbox"
+                [id]="'role-' + i"
+                [formControlName]="i"
+              />
+              <label class="form-check-label" [for]="'role-' + i">
+                {{ role.label }}
+              </label>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="text-danger mt-2" *ngIf="roleForm.errors?.['noRoleSelected'] && submitted">
+        Debes seleccionar al menos un rol.
+      </div>
+    </div>
+
+    <div class="mt-4 d-flex justify-content-end">
+      <button type="submit" class="btn btn-primary">
+        Asociar roles
+      </button>
+    </div>
+  </form>
+</div>

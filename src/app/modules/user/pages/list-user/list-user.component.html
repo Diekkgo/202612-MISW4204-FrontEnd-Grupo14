@@ -1,1 +1,29 @@
-<p>list-user works!</p>
+<div class="container">
+    <div class="d-flex justify-content-end">
+        <a [routerLink]="['/users/create']" class="btn btn-primary mt-4">Agregar Usuario</a>
+    </div>
+    <h1 class="text-center mt-5">Usuarios del sistema</h1>
+
+    <section class="table-user mt-5">
+        <table class="table table-striped table-hover">
+            <thead>
+                <tr>
+                    <th scope="col">Nombre</th>
+                    <th scope="col">Email</th>
+                    <th scope="col">Operaciones</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td>Mark</td>
+                    <td>correo&#64;correo.com</td>
+                    <td>
+                        <a [routerLink]="[`/users/${'1'}/roles`]" class="btn btn-success"><i class="material-icons">
+                                supervised_user_circle
+                            </i></a>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+    </section>
+</div>
