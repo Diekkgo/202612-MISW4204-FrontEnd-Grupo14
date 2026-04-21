@@ -1,4 +1,7 @@
 <div class="container py-4">
+    <div class="d-flex">
+        <a class="mt-2 text-dark" type="submit" [routerLink]="['/users']"><i class="material-icons">arrow_back</i></a>
+    </div>
     <form [formGroup]="userForm" (ngSubmit)="onSubmit()" class="row g-3">
         <h1 class="text-center my-4">Crear Usuario</h1>
 

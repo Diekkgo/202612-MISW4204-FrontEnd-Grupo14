@@ -8,11 +8,12 @@ import {
   AbstractControl,
   ValidationErrors
 } from '@angular/forms';
+import { RouterModule } from '@angular/router';
 
 @Component({
   selector: 'app-associate-role',
   standalone: true,
-  imports: [CommonModule, ReactiveFormsModule],
+  imports: [CommonModule, ReactiveFormsModule, RouterModule],
   templateUrl: './associate-role.component.html',
   styleUrl: './associate-role.component.css'
 })
