@@ -1,0 +1,38 @@
+<section class="page">
+  <div class="page-header">
+    <h1>Editar tarea</h1>
+    <p>Actualiza la información principal de la tarea.</p>
+  </div>
+
+  <form class="card form" [formGroup]="form" (ngSubmit)="submit()">
+    @if (errorMessage) {
+      <div class="alert error">{{ errorMessage }}</div>
+    }
+
+    <div class="field">
+      <label for="title">Título</label>
+      <input id="title" type="text" formControlName="title" />
+    </div>
+
+    <div class="field">
+      <label for="description">Descripción</label>
+      <textarea id="description" rows="4" formControlName="description"></textarea>
+    </div>
+
+    <div class="field">
+      <label for="hours">Horas</label>
+      <input id="hours" type="number" min="1" formControlName="hours" />
+    </div>
+
+    <div class="field">
+      <label for="observations">Observaciones</label>
+      <textarea id="observations" rows="4" formControlName="observations"></textarea>
+    </div>
+
+    <div class="actions">
+      <button type="submit" [disabled]="loading || saving">
+        {{ saving ? 'Guardando...' : 'Guardar cambios' }}
+      </button>
+    </div>
+  </form>
+</section>
