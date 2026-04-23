@@ -14,7 +14,11 @@ export const routes: Routes = [
         component: LoginComponent
     },
     {
-        path: 'user',
+        path: 'home',
+        component: HomeComponent
+    },
+    {
+        path: 'users',
         component: ListUserComponent
     },
     {
