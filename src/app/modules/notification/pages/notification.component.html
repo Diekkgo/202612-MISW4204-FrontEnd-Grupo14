@@ -1,0 +1,69 @@
+<div class="notification-wrapper">
+  <!-- Banner visible al iniciar sesión -->
+  <div class="login-reminder-banner" *ngIf="loginReminder">
+    <div class="banner-content">
+      <div>
+        <strong>{{ loginReminder.title }}</strong>
+        <p>{{ loginReminder.message }}</p>
+      </div>
+
+      <div class="banner-actions">
+        <button class="btn-banner-secondary" (click)="closeReminder()">
+          Cerrar
+        </button>
+        <button class="btn-banner-primary" (click)="markAsRead(loginReminder)">
+          Marcar como leído
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Botón campana -->
+  <div class="notification-bell-container">
+    <button class="notification-bell" (click)="toggleNotificationPanel()">
+      <span class="bell-icon">🔔</span>
+      <span class="notification-count" *ngIf="unreadCount > 0">
+        {{ unreadCount }}
+      </span>
+    </button>
+
+    <!-- Panel / centro de notificaciones -->
+    <div class="notification-panel" *ngIf="showNotificationPanel">
+      <div class="notification-panel-header">
+        <h3>Centro de notificaciones</h3>
+        <button class="btn-mark-all" (click)="markAllAsRead()">
+          Marcar todas como leídas
+        </button>
+      </div>
+
+      <div class="notification-list" *ngIf="notifications.length > 0; else noNotifications">
+        <div class="notification-item" *ngFor="let notification of notifications" [class.unread]="!notification.isRead">
+          <div class="notification-item-top">
+            <span class="notification-type" [ngClass]="getTypeClass(notification.type)">
+              {{ getTypeLabel(notification.type) }}
+            </span>
+
+            <span class="notification-date">
+              {{ notification.createdAt | date:'short' }}
+            </span>
+          </div>
+
+          <h4>{{ notification.title }}</h4>
+          <p>{{ notification.message }}</p>
+
+          <div class="notification-actions">
+            <button class="btn-read" *ngIf="!notification.isRead" (click)="markAsRead(notification)">
+              Marcar como leído
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <ng-template #noNotifications>
+        <div class="empty-notifications">
+          No tienes notificaciones disponibles.
+        </div>
+      </ng-template>
+    </div>
+  </div>
+</div>

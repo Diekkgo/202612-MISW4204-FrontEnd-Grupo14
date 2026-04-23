@@ -1,0 +1,53 @@
+<button class="btn-abrir" (click)="abrirModal()">
+    Ver semanas disponibles
+</button>
+
+<div class="modal-backdrop" *ngIf="mostrarModal">
+    <div class="modal-container">
+        <div class="modal-header">
+            <h2>Semanas disponibles</h2>
+            <button class="btn-cerrar" (click)="cerrarModal()">×</button>
+        </div>
+
+        <div class="modal-body">
+            <button class="btn-crear-semana" (click)="abrirModalCrearSemana()">
+                Crear semana
+            </button>
+            <table class="tabla-semanas" *ngIf="semanas.length > 0; else sinSemanas">
+                <thead>
+                    <tr>
+                        <th># Semana</th>
+                        <th>Fecha inicio</th>
+                        <th>Fecha fin</th>
+                        <th>Estado</th>
+                        <th>Acciones</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr *ngFor="let semana of semanas">
+                        <td>{{ semana.numero }}</td>
+                        <td>{{ semana.fechaInicio }}</td>
+                        <td>{{ semana.fechaFin }}</td>
+                        <td>{{ semana.estado }}</td>
+                        <td class="acciones">
+                            <button class="btn-editar" (click)="abrirModalEditarSemana(semana)">
+                                Editar
+                            </button>
+                            <button class="btn-eliminar" (click)="eliminarSemana(semana.id)">
+                                Eliminar
+                            </button>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+
+            <ng-template #sinSemanas>
+                <p class="sin-datos">No hay semanas registradas.</p>
+            </ng-template>
+        </div>
+    </div>
+</div>
+
+<app-create-edit-week-modal [mostrarModal]="mostrarModalSemana" [periodos]="periodos" [semana]="semanaSeleccionada"
+    (cerrar)="cerrarModalSemana()" (guardar)="guardarSemana($event)">
+</app-create-edit-week-modal>
