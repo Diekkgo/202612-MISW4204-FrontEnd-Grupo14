@@ -1,3 +1,3 @@
 export const environment = {
-    urlBase: 'http://localhost:8080/api/v1/'
+    urlBase: 'https://misw4204-api-543995823892.us-central1.run.app/api/v1/'
 };

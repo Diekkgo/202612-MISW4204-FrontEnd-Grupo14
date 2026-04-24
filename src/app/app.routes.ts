@@ -7,6 +7,7 @@ import { EditTaskComponent } from './modules/tasks/pages/edit-task/edit-task.com
 import { TaskDetailComponent } from './modules/tasks/pages/task-detail/task-detail.component';
 import { CreateTaskComponent } from './modules/tasks/pages/create-task/create-task.component';
 import { ListTasksComponent } from './modules/tasks/pages/list-tasks/list-tasks.component';
+import { HomeComponent } from './modules/home/pages/home/home.component';
 
 export const routes: Routes = [
     {
