@@ -7,6 +7,9 @@ import { EditTaskComponent } from './modules/tasks/pages/edit-task/edit-task.com
 import { TaskDetailComponent } from './modules/tasks/pages/task-detail/task-detail.component';
 import { CreateTaskComponent } from './modules/tasks/pages/create-task/create-task.component';
 import { ListTasksComponent } from './modules/tasks/pages/list-tasks/list-tasks.component';
+import { HomeComponent } from './modules/home/pages/home/home.component';
+import { ListReportsComponent } from './modules/reports/pages/list-reports/list-reports.component';
+import { GenerateReportsComponent } from './modules/reports/pages/generate-reports/generate-reports.component';
 
 export const routes: Routes = [
     {
@@ -44,6 +47,14 @@ export const routes: Routes = [
     {
         path:'tasks/:id/edit',
         component:EditTaskComponent
+    },
+    {
+        path: 'reports',
+        component: ListReportsComponent
+    },
+    {
+        path: 'reports/generate',
+        component: GenerateReportsComponent
     },
     {
         path: '',

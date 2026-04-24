@@ -1,8 +1,14 @@
 <nav class="navbar navbar-light bg-secondary">
   <div class="container-fluid">
     <span class="navbar-brand">GestorApp</span>
-    <div class="d-flex">
-      <button class="btn btn-secondary" type="submit"><i class="material-icons">exit_to_app</i></button>
+
+    <div class="d-flex align-items-center gap-3">
+      <a class="nav-link" routerLink="/home" routerLinkActive="active">Inicio</a>
+      <a class="nav-link" routerLink="/users" routerLinkActive="active">Usuarios</a>
+      <a class="nav-link" routerLink="/assignments" routerLinkActive="active">Asignaciones</a>
+      <a class="nav-link" routerLink="/tasks" routerLinkActive="active">Tareas</a>
+      <a class="nav-link" routerLink="/reports" routerLinkActive="active">Reportes</a>
+      <button class="btn btn-outline-light btn-sm" type="button" (click)="logout()">Salir</button>
     </div>
   </div>
 </nav>
