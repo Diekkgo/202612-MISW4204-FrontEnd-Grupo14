@@ -1,18 +1,18 @@
-<div class="modal-backdrop" *ngIf="mostrarModal">
+<div class="modal-backdrop" *ngIf="showWeekModal">
   <div class="modal-container">
     <div class="modal-header">
-      <h2>{{ esEdicion ? 'Editar semana' : 'Crear semana' }}</h2>
-      <button class="btn-cerrar" (click)="cerrarModal()">×</button>
+      <h2>{{ isEdit ? 'Editar semana' : 'Crear semana' }}</h2>
+      <button class="btn-cerrar" (click)="closeModal()">×</button>
     </div>
 
     <div class="modal-body">
-      <form [formGroup]="semanaForm" (ngSubmit)="guardarSemana()">
+      <form [formGroup]="weekForm" (ngSubmit)="saveWeek()">
         <div class="form-group">
           <label for="periodId">Período académico</label>
           <select id="periodId" formControlName="periodId">
             <option value="">Seleccione un período</option>
-            <option *ngFor="let periodo of periodos" [value]="periodo.id">
-              {{ periodo.nombre }}
+            <option *ngFor="let period of periods" [value]="period.id">
+              {{ period.name }}
             </option>
           </select>
 
@@ -39,27 +39,27 @@
           </small>
         </div>
 
-        <div class="errores-form" *ngIf="semanaForm.errors && semanaForm.touched">
-          <small class="error" *ngIf="semanaForm.errors?.['startNotMonday']">
+        <div class="errores-form" *ngIf="weekForm.errors && weekForm.touched">
+          <small class="error" *ngIf="weekForm.errors['startNotMonday']">
             La fecha de inicio debe ser un lunes.
           </small>
 
-          <small class="error" *ngIf="semanaForm.errors?.['endNotSunday']">
+          <small class="error" *ngIf="weekForm.errors['endNotSunday']">
             La fecha de fin debe ser un domingo.
           </small>
 
-          <small class="error" *ngIf="semanaForm.errors?.['invalidRange']">
+          <small class="error" *ngIf="weekForm.errors['invalidRange']">
             La semana debe tener exactamente 7 días, de lunes a domingo.
           </small>
         </div>
 
         <div class="acciones">
-          <button type="button" class="btn-secundario" (click)="cerrarModal()">
+          <button type="button" class="btn-secundario" (click)="closeModal()">
             Cancelar
           </button>
 
           <button type="submit" class="btn-primario">
-            {{ esEdicion ? 'Guardar cambios' : 'Crear semana' }}
+            {{ isEdit ? 'Guardar cambios' : 'Crear semana' }}
           </button>
         </div>
       </form>

@@ -8,18 +8,7 @@ import {
   ValidationErrors,
   Validators
 } from '@angular/forms';
-
-interface Periodo {
-  id: string;
-  nombre: string;
-}
-
-interface Semana {
-  id?: string;
-  periodId: string;
-  startDate: string;
-  endDate: string;
-}
+import { Periods, Weeks } from '../../../weeks.model';
 
 @Component({
   selector: 'app-create-edit-week-modal',
@@ -29,17 +18,17 @@ interface Semana {
   styleUrls: ['./create-edit-weeks.component.css']
 })
 export class CreateEditWeeksComponent implements OnChanges {
-  @Input() mostrarModal = false;
-  @Input() periodos: Periodo[] = [];
-  @Input() semana: Semana | null = null;
+  @Input() showWeekModal = false;
+  @Input() periods: Periods[] = [];
+  @Input() selectedWeek: Weeks | null = null;
 
-  @Output() cerrar = new EventEmitter<void>();
-  @Output() guardar = new EventEmitter<Semana>();
+  @Output() close = new EventEmitter<void>();
+  @Output() save = new EventEmitter<Weeks>();
 
-  semanaForm: FormGroup;
+  weekForm: FormGroup;
 
   constructor(private fb: FormBuilder) {
-    this.semanaForm = this.fb.group(
+    this.weekForm = this.fb.group(
       {
         id: [''],
         periodId: ['', Validators.required],
@@ -47,44 +36,44 @@ export class CreateEditWeeksComponent implements OnChanges {
         endDate: ['', Validators.required]
       },
       {
-        validators: [this.validarSemana]
+        validators: [this.validateWeek]
       }
     );
 
-    this.semanaForm.get('startDate')?.valueChanges.subscribe((value) => {
+    this.weekForm.get('startDate')?.valueChanges.subscribe((value) => {
       if (!value) return;
 
       const fechaInicio = new Date(value + 'T00:00:00');
       const fechaFin = new Date(fechaInicio);
       fechaFin.setDate(fechaInicio.getDate() + 6);
 
-      this.semanaForm.patchValue(
-        { endDate: this.formatearFecha(fechaFin) },
+      this.weekForm.patchValue(
+        { endDate: this.formatValidationDate(fechaFin) },
         { emitEvent: false }
       );
     });
   }
 
   ngOnChanges(changes: SimpleChanges): void {
-    if (changes['semana'] || changes['mostrarModal']) {
-      this.cargarFormulario();
+    if (changes['selectedWeek'] || changes['showWeekModal']) {
+      this.loadForm();
     }
   }
 
-  get esEdicion(): boolean {
-    return !!this.semana;
+  get isEdit(): boolean {
+    return !!this.selectedWeek;
   }
 
-  cargarFormulario(): void {
-    if (this.semana) {
-      this.semanaForm.patchValue({
-        id: this.semana.id ?? '',
-        periodId: this.semana.periodId,
-        startDate: this.semana.startDate,
-        endDate: this.semana.endDate
+  loadForm(): void {
+    if (this.selectedWeek) {
+      this.weekForm.patchValue({
+        id: this.selectedWeek.ID ?? '',
+        periodId: this.selectedWeek.PeriodID,
+        startDate: this.formatDate(this.selectedWeek.StartDate),
+        endDate: this.formatDate(this.selectedWeek.EndDate)
       });
     } else {
-      this.semanaForm.reset({
+      this.weekForm.reset({
         id: '',
         periodId: '',
         startDate: '',
@@ -93,22 +82,22 @@ export class CreateEditWeeksComponent implements OnChanges {
     }
   }
 
-  cerrarModal(): void {
-    this.semanaForm.reset();
-    this.cerrar.emit();
+  closeModal(): void {
+    this.weekForm.reset();
+    this.close.emit();
   }
 
-  guardarSemana(): void {
-    this.semanaForm.markAllAsTouched();
+  saveWeek(): void {
+    this.weekForm.markAllAsTouched();
 
-    if (this.semanaForm.invalid) return;
+    if (this.weekForm.invalid) return;
 
-    this.guardar.emit(this.semanaForm.getRawValue());
-    this.semanaForm.reset();
-    this.cerrar.emit();
+    this.save.emit(this.weekForm.getRawValue());
+    this.weekForm.reset();
+    this.close.emit();
   }
 
-  validarSemana(control: AbstractControl): ValidationErrors | null {
+  validateWeek(control: AbstractControl): ValidationErrors | null {
     const startDate = control.get('startDate')?.value;
     const endDate = control.get('endDate')?.value;
 
@@ -140,22 +129,34 @@ export class CreateEditWeeksComponent implements OnChanges {
     return Object.keys(errores).length ? errores : null;
   }
 
-  formatearFecha(fecha: Date): string {
+  formatValidationDate(fecha: Date): string {
     const year = fecha.getFullYear();
     const month = String(fecha.getMonth() + 1).padStart(2, '0');
     const day = String(fecha.getDate()).padStart(2, '0');
     return `${year}-${month}-${day}`;
   }
 
+  formatDate(date: string | Date): string {
+    if (!date) return '';
+
+    const d = new Date(date);
+
+    const year = d.getUTCFullYear();
+    const month = String(d.getUTCMonth() + 1).padStart(2, '0');
+    const day = String(d.getUTCDate()).padStart(2, '0');
+
+    return `${year}-${month}-${day}`;
+  }
+
   get periodId() {
-    return this.semanaForm.get('periodId');
+    return this.weekForm.get('periodId');
   }
 
   get startDate() {
-    return this.semanaForm.get('startDate');
+    return this.weekForm.get('startDate');
   }
 
   get endDate() {
-    return this.semanaForm.get('endDate');
+    return this.weekForm.get('endDate');
   }
 }

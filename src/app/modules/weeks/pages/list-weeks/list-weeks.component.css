@@ -105,6 +105,31 @@
   background-color: #b91c1c;
 }
 
+.btn-activar {
+  background-color: #10b981;
+  color: white;
+  border: none;
+  padding: 8px 12px;
+  border-radius: 6px;
+}
+
+.btn-activar:hover {
+  background-color: #059669;
+}
+
+.btn-cerrar-semana {
+  background-color: #dc2626;
+  color: white;
+  border: none;
+  padding: 8px 12px;
+  border-radius: 6px;
+  cursor: pointer;
+}
+
+.btn-cerrar-semana:hover {
+  background-color: #b91c1c;
+}
+
 .sin-datos {
   margin-top: 16px;
   color: #6b7280;
