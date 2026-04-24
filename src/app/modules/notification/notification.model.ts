@@ -1,10 +1,8 @@
 export interface AppNotification {
   id: string;
-  title: string;
+  user_id: string;
   message: string;
-  type: 'REMINDER' | 'INFO' | 'WARNING';
-  createdAt: string;
-  isRead: boolean;
-  visibleOnLogin: boolean;
-  scheduledDay?: 'MONDAY' | 'TUESDAY' | 'WEDNESDAY' | 'THURSDAY' | 'FRIDAY' | 'SATURDAY' | 'SUNDAY';
+  type: string;
+  is_read: boolean;
+  created_at: string;
 }

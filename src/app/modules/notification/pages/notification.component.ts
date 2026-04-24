@@ -22,28 +22,28 @@ export class NotificationComponent implements OnInit {
   ngOnInit(): void {
     this.loadNotifications();
     this.loadUnreadCount();
-    this.loadLoginReminder();
+    // this.loadLoginReminder();
   }
 
   loadNotifications(): void {
     this.notificationService.getNotifications().subscribe(data => {
       this.notifications = [...data].sort((a, b) =>
-        new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()
+        new Date(b.created_at).getTime() - new Date(a.created_at).getTime()
       );
     });
   }
 
-  loadUnreadCount(): void {
-    this.notificationService.getUnreadCount().subscribe(count => {
-      this.unreadCount = count;
-    });
+  loadUnreadCount(): void {   
+    this.notificationService.getNotifications().subscribe(data => {
+        this.unreadCount = this.notifications.filter(item => !item.is_read).length;;
+    }); 
   }
 
-  loadLoginReminder(): void {
-    this.notificationService.getLoginReminder().subscribe(data => {
-      this.loginReminder = data;
-    });
-  }
+  // loadLoginReminder(): void {
+  //   this.notificationService.getLoginReminder().subscribe(data => {
+  //     this.loginReminder = data;
+  //   });
+  // }
 
   toggleNotificationPanel(): void {
     this.showNotificationPanel = !this.showNotificationPanel;
@@ -54,7 +54,7 @@ export class NotificationComponent implements OnInit {
   }
 
   markAsRead(notification: AppNotification): void {
-    if (notification.isRead) return;
+    if (notification.is_read) return;
 
     this.notificationService.markAsRead(notification.id).subscribe(() => {
       this.loadNotifications();
@@ -66,13 +66,13 @@ export class NotificationComponent implements OnInit {
     });
   }
 
-  markAllAsRead(): void {
-    this.notificationService.markAllAsRead().subscribe(() => {
-      this.loadNotifications();
-      this.loadUnreadCount();
-      this.loginReminder = null;
-    });
-  }
+  // markAllAsRead(): void {
+  //   this.notificationService.markAllAsRead().subscribe(() => {
+  //     this.loadNotifications();
+  //     this.loadUnreadCount();
+  //     this.loginReminder = null;
+  //   });
+  // }
 
   getTypeLabel(type: string): string {
     switch (type) {

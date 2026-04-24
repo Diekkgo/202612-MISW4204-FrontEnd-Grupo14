@@ -1,81 +1,59 @@
 import { Injectable } from '@angular/core';
 import { Observable, of } from 'rxjs';
 import { AppNotification } from './notification.model';
+import { Weeks } from '../weeks/weeks.model';
+import { environment } from '../../../environments/environment';
+import { HttpClient, HttpHeaders } from '@angular/common/http';
 
 @Injectable({
   providedIn: 'root'
 })
 export class NotificationService {
-  private notifications: AppNotification[] = [
-    {
-      id: 'n1',
-      title: 'Recordatorio semanal',
-      message: 'Recuerda registrar tus actividades de la semana antes de finalizar el día.',
-      type: 'REMINDER',
-      createdAt: '2026-04-21T08:00:00',
-      isRead: false,
-      visibleOnLogin: true,
-      scheduledDay: 'FRIDAY'
-    },
-    {
-      id: 'n2',
-      title: 'Actualización de plataforma',
-      message: 'La plataforma fue actualizada correctamente y ya se encuentra disponible.',
-      type: 'INFO',
-      createdAt: '2026-04-20T10:30:00',
-      isRead: false,
-      visibleOnLogin: false
-    },
-    {
-      id: 'n3',
-      title: 'Aviso importante',
-      message: 'Revisa que todas tus tareas estén asociadas a la semana correspondiente.',
-      type: 'WARNING',
-      createdAt: '2026-04-18T14:00:00',
-      isRead: true,
-      visibleOnLogin: false
-    }
-  ];
+  private apiUrl = environment.urlBase;
+  private userId = 'e2fc579b-295a-4514-afd0-a4a36ea10cd4';
+  private token = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyX2lkIjoiZTJmYzU3OWItMjk1YS00NTE0LWFmZDAtYTRhMzZlYTEwY2Q0IiwiZW1haWwiOiJ0ZXN0QHRlc3QuY29tIiwiaXNzIjoidGFza3MtdHJhY2tpbmctYXBpIiwiZXhwIjoxNzc3MDg4NjEyLCJuYmYiOjE3NzcwMDIyMTIsImlhdCI6MTc3NzAwMjIxMn0.7FL1nCOauUk4WuaHUXRliffCgCdGSoFZPUE5e3Pk9jM';
+  private headers = new HttpHeaders({
+      Authorization: `Bearer ${this.token}`,
+      'Content-Type': 'application/json'
+  });
+
+  constructor(private http: HttpClient) {}
 
   getNotifications(): Observable<AppNotification[]> {
-    return of(this.notifications);
+    return this.http.get<AppNotification[]>(`${this.apiUrl}notifications/${this.userId}`, { headers: this.headers });
   }
 
-  getUnreadCount(): Observable<number> {
-    const unread = this.notifications.filter(item => !item.isRead).length;
-    return of(unread);
+  markAsRead(notificationId: string): Observable<AppNotification> {
+    return this.http.put<AppNotification>(`${this.apiUrl}notifications/${notificationId}/read`, {}, { headers: this.headers });
   }
 
-  getLoginReminder(): Observable<AppNotification | null> {
-    const isFriday = this.isFriday();
+  // getUnreadCount(): Observable<number> {
+  //   const unread = this.notifications.filter(item => !item.is_read).length;
+  //   return of(unread);
+  // }
 
-    if (!isFriday) {
-      return of(null);
-    }
+  // getLoginReminder(): Observable<AppNotification | null> {
+  //   const isFriday = this.isFriday();
 
-    const reminder = this.notifications.find(
-      item => item.type === 'REMINDER' && item.visibleOnLogin && !item.isRead
-    ) || null;
+  //   if (!isFriday) {
+  //     return of(null);
+  //   }
 
-    return of(reminder);
-  }
+  //   const reminder = this.notifications.find(
+  //     item => item.type === 'REMINDER' && item.visibleOnLogin && !item.isRead
+  //   ) || null;
 
-  markAsRead(notificationId: string): Observable<boolean> {
-    this.notifications = this.notifications.map(item =>
-      item.id === notificationId ? { ...item, isRead: true } : item
-    );
+  //   return of(reminder);
+  // }
 
-    return of(true);
-  }
+  // markAllAsRead(): Observable<boolean> {
+  //   this.notifications = this.notifications.map(item => ({
+  //     ...item,
+  //     isRead: true
+  //   }));
 
-  markAllAsRead(): Observable<boolean> {
-    this.notifications = this.notifications.map(item => ({
-      ...item,
-      isRead: true
-    }));
-
-    return of(true);
-  }
+  //   return of(true);
+  // }
 
   private isFriday(): boolean {
     const today = new Date();
