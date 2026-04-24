@@ -1,0 +1,59 @@
+<section class="page">
+  @if (loading) {
+    <div class="card"><p>Cargando detalle de la tarea...</p></div>
+  } @else if (task) {
+    <div class="detail-header">
+      <div>
+        <h1>{{ task.title }}</h1>
+        <p>Consulta la información detallada de la tarea.</p>
+      </div>
+
+      <button type="button" class="secondary" (click)="goBack()">Volver</button>
+    </div>
+
+    @if (errorMessage) {
+      <div class="alert error">{{ errorMessage }}</div>
+    }
+
+    <div class="card detail-card">
+      <div class="detail-grid">
+        <div class="detail-item">
+          <span class="label">Descripción</span>
+          <p>{{ task.description || 'Sin descripción.' }}</p>
+        </div>
+
+        <div class="detail-item">
+          <span class="label">Horas</span>
+          <p>{{ task.hours }}</p>
+        </div>
+
+        <div class="detail-item">
+          <span class="label">Estado</span>
+          <p>{{ task.status }}</p>
+        </div>
+
+        <div class="detail-item">
+          <span class="label">Observaciones</span>
+          <p>{{ task.observations || 'Sin observaciones.' }}</p>
+        </div>
+
+        <div class="detail-item">
+          <span class="label">Creada en</span>
+          <p>{{ task.createdAt | date:'medium' }}</p>
+        </div>
+
+        <div class="detail-item">
+          <span class="label">Actualizada en</span>
+          <p>{{ task.updatedAt | date:'medium' }}</p>
+        </div>
+      </div>
+
+      <div class="actions">
+        <button type="button" (click)="edit()">Editar</button>
+        <button type="button" class="danger" [disabled]="deleting" (click)="deleteTask()">
+          {{ deleting ? 'Eliminando...' : 'Eliminar' }}
+        </button>
+      </div>
+    </div>
+  }
+</section>

@@ -1,0 +1,93 @@
+<section class="page">
+  <div class="page-header">
+    <div>
+      <h1>Listado de tareas</h1>
+      <p>Consulta, filtra y actualiza el estado de las tareas.</p>
+    </div>
+
+    <button type="button" class="primary" (click)="goToCreate()">Nueva tarea</button>
+  </div>
+
+  <form class="card filters" [formGroup]="filtersForm" (ngSubmit)="loadTasks()">
+    <div class="field">
+      <label for="assignmentId">Asignación</label>
+      <select id="assignmentId" formControlName="assignmentId">
+        <option value="">Todas</option>
+        @for (assignment of assignments; track assignment.id) {
+          <option [value]="assignment.id">{{ getAssignmentLabel(assignment.id) }}</option>
+        }
+      </select>
+    </div>
+
+    <div class="field">
+      <label for="weekId">Semana</label>
+      <select id="weekId" formControlName="weekId">
+        <option value="">Todas</option>
+        @for (week of weeks; track week.id) {
+          <option [value]="week.id">{{ week.label }}</option>
+        }
+      </select>
+    </div>
+
+    <div class="actions">
+      <button type="submit">Buscar</button>
+      <button type="button" class="secondary" (click)="clearFilters()">Limpiar</button>
+    </div>
+  </form>
+
+  @if (successMessage) {
+    <div class="alert success">{{ successMessage }}</div>
+  }
+
+  @if (errorMessage) {
+    <div class="alert error">{{ errorMessage }}</div>
+  }
+
+  <div class="card table-card">
+    @if (loading) {
+      <p>Cargando tareas...</p>
+    } @else if (tasks.length === 0) {
+      <p>No hay tareas para mostrar.</p>
+    } @else {
+      <table>
+        <thead>
+          <tr>
+            <th>Título</th>
+            <th>Asignación</th>
+            <th>Semana</th>
+            <th>Horas</th>
+            <th>Estado</th>
+            <th>Acciones</th>
+          </tr>
+        </thead>
+
+        <tbody>
+          @for (task of tasks; track task.id) {
+            <tr>
+              <td>{{ task.title }}</td>
+              <td>{{ getAssignmentLabel(task.assignmentId) }}</td>
+              <td>{{ getWeekLabel(task.weekId) }}</td>
+              <td>{{ task.hours }}</td>
+              <td>
+                <select
+                  class="status-select"
+                  [value]="task.status"
+                  (change)="updateStatus(task, $any($event.target).value)"
+                >
+                  @for (status of statusOptions; track status) {
+                    <option [value]="status">{{ status }}</option>
+                  }
+                </select>
+              </td>
+              <td>
+                <button type="button" class="table-action" (click)="goToDetail(task.id)">
+                  Detalle
+                </button>
+              </td>
+            </tr>
+          }
+        </tbody>
+      </table>
+    }
+  </div>
+</section>

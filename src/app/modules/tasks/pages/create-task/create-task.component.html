@@ -1,0 +1,79 @@
+<section class="page">
+  <div class="page-header">
+    <h1>Crear tarea</h1>
+    <p>Registra una nueva tarea asociada a una asignación y una semana.</p>
+  </div>
+
+  <form class="card form" [formGroup]="form" (ngSubmit)="submit()">
+    @if (errorMessage) {
+      <div class="alert error">{{ errorMessage }}</div>
+    }
+
+    <div class="field">
+      <label for="assignmentId">Asignación</label>
+      <select id="assignmentId" formControlName="assignmentId">
+        <option value="">Selecciona una asignación</option>
+        @for (assignment of assignments; track assignment.id) {
+          <option [value]="assignment.id">{{ getAssignmentLabel(assignment.id) }}</option>
+        }
+      </select>
+      @if (hasError('assignmentId')) {
+        <small class="error-text">La asignación es obligatoria.</small>
+      }
+    </div>
+
+    <div class="field">
+      <label for="weekId">Semana</label>
+      <select id="weekId" formControlName="weekId">
+        <option value="">Selecciona una semana</option>
+        @for (week of weeks; track week.id) {
+          <option [value]="week.id">{{ week.label }}</option>
+        }
+      </select>
+      @if (hasError('weekId')) {
+        <small class="error-text">La semana es obligatoria.</small>
+      }
+    </div>
+
+    <div class="field">
+      <label for="title">Título</label>
+      <input id="title" type="text" formControlName="title" placeholder="Ingresa el título" />
+      @if (hasError('title')) {
+        <small class="error-text">El título es obligatorio.</small>
+      }
+    </div>
+
+    <div class="field">
+      <label for="description">Descripción</label>
+      <textarea id="description" rows="4" formControlName="description" placeholder="Describe la tarea"></textarea>
+    </div>
+
+    <div class="field">
+      <label for="hours">Horas</label>
+      <input id="hours" type="number" min="1" formControlName="hours" />
+      @if (hasError('hours')) {
+        <small class="error-text">Las horas deben ser mayores a 0.</small>
+      }
+    </div>
+
+    <div class="field">
+      <label for="status">Estado</label>
+      <select id="status" formControlName="status">
+        @for (status of statusOptions; track status) {
+          <option [value]="status">{{ status }}</option>
+        }
+      </select>
+    </div>
+
+    <div class="field">
+      <label for="observations">Observaciones</label>
+      <textarea id="observations" rows="4" formControlName="observations" placeholder="Observaciones adicionales"></textarea>
+    </div>
+
+    <div class="actions">
+      <button type="submit" [disabled]="loading || loadingCatalogs">
+        {{ loading ? 'Guardando...' : 'Crear tarea' }}
+      </button>
+    </div>
+  </form>
+</section>
