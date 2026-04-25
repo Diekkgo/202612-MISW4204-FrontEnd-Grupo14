@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { Component } from '@angular/core';
+import { Component, inject, OnInit } from '@angular/core';
 import {
   FormArray,
   FormBuilder,
@@ -8,7 +8,11 @@ import {
   AbstractControl,
   ValidationErrors
 } from '@angular/forms';
-import { RouterModule } from '@angular/router';
+import { ActivatedRoute, Router, RouterModule } from '@angular/router';
+import { UserService } from '../../services/user.service';
+import Swal from 'sweetalert2';
+import { Rol } from '../../models/rol.model';
+import { UserUpdateRolesModel } from '../../models/http/users.interface';
 
 @Component({
   selector: 'app-associate-role',
@@ -17,16 +21,21 @@ import { RouterModule } from '@angular/router';
   templateUrl: './associate-role.component.html',
   styleUrl: './associate-role.component.css'
 })
-export class AssociateRoleComponent {
+export class AssociateRoleComponent implements OnInit {
   submitted = false;
 
   availableRoles = [
-    { id: 'ADMIN', label: 'Administrador' },
-    { id: 'PROFESOR', label: 'Profesor' },
-    { id: 'ESTUDIANTE', label: 'Estudiante' }
+    { id: 1, label: 'Administrador' },
+    { id: 2, label: 'Profesor' },
+    { id: 3, label: 'Estudiante' }
   ];
 
   roleForm: FormGroup;
+  userId: string = '';
+
+  private readonly userServive = inject(UserService);
+  private readonly route = inject(ActivatedRoute);
+  private readonly router = inject(Router);
 
   constructor(private readonly fb: FormBuilder) {
     this.roleForm = this.fb.group(
@@ -39,6 +48,120 @@ export class AssociateRoleComponent {
         validators: [this.atLeastOneRoleValidator]
       }
     );
+  }
+
+  ngOnInit(): void {
+    this.userId = this.route.snapshot.paramMap.get('id') || '';
+
+    this.getRolesByUser(this.userId);
+  }
+
+  getRolesByUser(userId: string) {
+    this.userServive.getUser(userId).subscribe({
+      next: (response) => {
+        if (response) {
+          this.setRoles(response.roles);
+        } else {
+          Swal.mixin({
+            toast: true,
+            position: "top-end",
+            showConfirmButton: false,
+            timer: 3000,
+            timerProgressBar: true,
+            didOpen: (toast) => {
+              toast.onmouseenter = Swal.stopTimer;
+              toast.onmouseleave = Swal.resumeTimer;
+            }
+          }).fire({
+            icon: "error",
+            title: `Error al cargar el usuario`
+          });
+        }
+      },
+      error: (error) => {
+        Swal.mixin({
+          toast: true,
+          position: "top-end",
+          showConfirmButton: false,
+          timer: 3000,
+          timerProgressBar: true,
+          didOpen: (toast) => {
+            toast.onmouseenter = Swal.stopTimer;
+            toast.onmouseleave = Swal.resumeTimer;
+          }
+        }).fire({
+          icon: "error",
+          title: `Error al cargar el usuario: ${error.error.message}`
+        });
+      }
+    })
+  }
+
+  updateRoles(userId: string, roles: UserUpdateRolesModel) {
+    this.userServive.updateRolesByUser(userId, roles).subscribe({
+      next: (response) => {
+        if (response) {
+          Swal.mixin({
+            toast: true,
+            position: "top-end",
+            showConfirmButton: false,
+            timer: 3000,
+            timerProgressBar: true,
+            didOpen: (toast) => {
+              toast.onmouseenter = Swal.stopTimer;
+              toast.onmouseleave = Swal.resumeTimer;
+            }
+          }).fire({
+            icon: "success",
+            title: `Roles actualizados exitosamente`
+          });
+
+          this.router.navigate(['/users']);
+        } else {
+          Swal.mixin({
+            toast: true,
+            position: "top-end",
+            showConfirmButton: false,
+            timer: 3000,
+            timerProgressBar: true,
+            didOpen: (toast) => {
+              toast.onmouseenter = Swal.stopTimer;
+              toast.onmouseleave = Swal.resumeTimer;
+            }
+          }).fire({
+            icon: "error",
+            title: `Error al cargar el usuario`
+          });
+        }
+      },
+      error: (error) => {
+        Swal.mixin({
+          toast: true,
+          position: "top-end",
+          showConfirmButton: false,
+          timer: 3000,
+          timerProgressBar: true,
+          didOpen: (toast) => {
+            toast.onmouseenter = Swal.stopTimer;
+            toast.onmouseleave = Swal.resumeTimer;
+          }
+        }).fire({
+          icon: "error",
+          title: `Error al actualizar roles: ${error.error.message}`
+        });
+      }
+    })
+  }
+
+  setRoles(roles: Rol[]) {
+    const userRoleIds = roles.map((role: any) => role.id);
+    this.roleForm.patchValue({
+      roles: this.availableRoles.map(role =>
+        userRoleIds.includes(role.id)
+      )
+    });
+
+    this.roleForm.updateValueAndValidity();
   }
 
   get roles(): FormArray {
@@ -67,8 +190,10 @@ export class AssociateRoleComponent {
       .map((control, index) => control.value ? this.availableRoles[index].id : null)
       .filter(role => role !== null);
 
-    console.log('Roles seleccionados:', selectedRoles);
+    const roles: UserUpdateRolesModel = {
+      roles: selectedRoles
+    }
 
-    // Eenviar al servicio:
+    this.updateRoles(this.userId, roles);
   }
 }

@@ -10,6 +10,11 @@ import { ListTasksComponent } from './modules/tasks/pages/list-tasks/list-tasks.
 import { HomeComponent } from './modules/home/pages/home/home.component';
 import { ListReportsComponent } from './modules/reports/pages/list-reports/list-reports.component';
 import { GenerateReportsComponent } from './modules/reports/pages/generate-reports/generate-reports.component';
+import { ListCourseComponent } from './modules/course/pages/list-course/list-course.component';
+import { CreateCourseComponent } from './modules/course/pages/create-course/create-course.component';
+import { CourseDetailsComponent } from './modules/course/pages/course-details/course-details.component';
+import { AssociateRoleComponent } from './modules/user/pages/associate-role/associate-role.component';
+import { CreateUserComponent } from './modules/user/pages/create-user/create-user.component';
 
 export const routes: Routes = [
     {
@@ -23,6 +28,14 @@ export const routes: Routes = [
     {
         path: 'users',
         component: ListUserComponent
+    },
+    {
+        path: 'users/create',
+        component: CreateUserComponent
+    },
+    {
+        path: 'users/:id/roles',
+        component: AssociateRoleComponent
     },
     {
         path: 'assignments',
@@ -60,6 +73,18 @@ export const routes: Routes = [
         path: '',
         pathMatch: 'full',
         redirectTo: 'auth'
+    },
+    {
+        path: 'courses',
+        component: ListCourseComponent
+    },
+    {
+        path: 'courses/create',
+        component: CreateCourseComponent
+    },
+    {
+        path: 'courses/details/:id',
+        component: CourseDetailsComponent
     },
     {
         path: '**',
