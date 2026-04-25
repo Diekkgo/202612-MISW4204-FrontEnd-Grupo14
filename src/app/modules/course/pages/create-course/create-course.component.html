@@ -1,12 +1,12 @@
 <div class="container py-4">
     <div class="d-flex">
-        <a class="mt-2 text-dark" type="submit" [routerLink]="['/users']"><i class="material-icons">arrow_back</i></a>
+        <a class="mt-2 text-dark" type="submit" [routerLink]="['/courses']"><i class="material-icons">arrow_back</i></a>
     </div>
     <form [formGroup]="courseForm" (ngSubmit)="onSubmit()" class="row g-3">
         <h1 class="text-center my-4">Crear Cursos</h1>
 
         <div class="col-md-6">
-            <label for="name" class="form-label">Nombre</label>
+            <label for="name" class="form-label">Nombre: </label>
             <input id="name" type="text" class="form-control" formControlName="name"
                 [class.is-invalid]="isInvalid('name')" [class.is-valid]="isValid('name')"
                 placeholder="Ej: Desarrollo de software en la nube" />
@@ -20,74 +20,56 @@
         </div>
 
         <div class="col-md-6">
-            <label for="email" class="form-label">Correo electrónico</label>
-            <input id="email" type="email" class="form-control" formControlName="email"
-                [class.is-invalid]="isInvalid('email')" [class.is-valid]="isValid('email')"
-                placeholder="Ej: usuario@correo.com" />
-
-            <div class="invalid-feedback" *ngIf="email?.errors?.['required']">
-                El correo es obligatorio.
+            <label for="type" class="form-label">Tipo de curso: </label>
+            <select class="form-select" aria-label="Default select example" id="type" formControlName="type"
+                [class.is-invalid]="isInvalid('type')" [class.is-valid]="isValid('type')">
+                <option selected value="">Seleccione una opción...</option>
+                <option value="COURSE">Curso</option>
+                <option value="PROJECT">Proyecto</option>
+            </select>
+            <div class="invalid-feedback" *ngIf="type?.errors?.['required']">
+                El tipo de curso es obligatorio.
             </div>
-            <div class="invalid-feedback" *ngIf="email?.errors?.['email']">
-                Ingresa un correo válido.
+        </div>
+
+        <div class="col-md-12">
+            <label for="period" class="form-label">Periodo: </label>
+            <select class="form-select" aria-label="Default select example" id="period" formControlName="period"
+                [class.is-invalid]="isInvalid('period')" [class.is-valid]="isValid('period')">
+                <option selected value="">Seleccione una opción...</option>
+                <option value="COURSE">Curso</option>
+                <option value="PROJECT">Proyecto</option>
+            </select>
+            <div class="invalid-feedback" *ngIf="period?.errors?.['required']">
+                El periodo es obligatorio.
             </div>
         </div>
 
         <div class="col-md-6">
-            <label for="password" class="form-label">Contraseña</label>
-            <input id="password" type="password" class="form-control" formControlName="password"
-                [class.is-invalid]="isInvalid('password')" [class.is-valid]="isValid('password')"
-                placeholder="Mínimo 6 caracteres" />
+            <label for="startDate" class="form-label">Fecha de inicio: </label>
+            <input type="datetime-local" class="form-control" id="startDate" formControlName="startDate"
+                [class.is-invalid]="isInvalid('startDate')"
+                [class.is-valid]="isValid('startDate')">
 
-            <div class="invalid-feedback" *ngIf="password?.errors?.['required']">
-                La contraseña es obligatoria.
-            </div>
-            <div class="invalid-feedback" *ngIf="password?.errors?.['minlength']">
-                La contraseña debe tener al menos 6 caracteres.
-            </div>
-            <div class="invalid-feedback" *ngIf="password?.errors?.['pattern']">
-                Debe contener al menos una letra y un número.
+            <div class="invalid-feedback" *ngIf="startDate?.errors?.['required']">
+                La fecha de inicio obligatoria.
             </div>
         </div>
 
         <div class="col-md-6">
-            <label for="confirmPassword" class="form-label">Confirmar contraseña</label>
-            <input id="confirmPassword" type="password" class="form-control" formControlName="confirmPassword"
-                [class.is-invalid]="isInvalid('confirmPassword') || (courseForm.errors?.['passwordsMismatch'] && (confirmPassword?.touched || submitted))"
-                [class.is-valid]="isValid('confirmPassword') && !courseForm.errors?.['passwordsMismatch']"
-                placeholder="Repite la contraseña" />
+            <label for="endDate" class="form-label">Fecha de finalización: </label>
+            <input type="datetime-local" class="form-control" id="endDate" formControlName="endDate"
+                [class.is-invalid]="isInvalid('endDate')"
+                [class.is-valid]="isValid('endDate')">
 
-            <div class="invalid-feedback" *ngIf="confirmPassword?.errors?.['required']">
-                Debes confirmar la contraseña.
-            </div>
-            <div class="invalid-feedback"
-                *ngIf="courseForm.errors?.['passwordsMismatch'] && (confirmPassword?.touched || submitted)">
-                Las contraseñas no coinciden.
+            <div class="invalid-feedback" *ngIf="endDate?.errors?.['required']">
+                La fecha de finalización obligatoria.
             </div>
         </div>
 
         <div class="col-12">
-            <label for="" class="form-label d-block">Roles</label>
-
-            <div class="roles-wrapper p-3 rounded border"
-                [class.border-danger]="courseForm.errors?.['noRoleSelected'] && submitted"
-                [class.border-success]="!courseForm.errors?.['noRoleSelected'] && submitted">
-
-                <div formArrayName="roles" class="row">
-                    <div class="col-md-4" *ngFor="let role of availableRoles; let i = index">
-                        <div class="form-check">
-                            <input class="form-check-input" type="checkbox" [id]="'role-' + i" [formControlName]="i" />
-                            <label class="form-check-label" [for]="'role-' + i">
-                                {{ role.label }}
-                            </label>
-                        </div>
-                    </div>
-                </div>
-            </div>
-
-            <div class="text-danger mt-2" *ngIf="courseForm.errors?.['noRoleSelected'] && submitted">
-                Debes seleccionar al menos un rol.
-            </div>
+            <label for="observations" class="form-label">Observaciones: </label>
+            <textarea class="form-control" id="observations" formControlName="observations" placeholder="Observaciones..."></textarea>
         </div>
 
         <div class="col-12 d-flex justify-content-end gap-2 mt-4">

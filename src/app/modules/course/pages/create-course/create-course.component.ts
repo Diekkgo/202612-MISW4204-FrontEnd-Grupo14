@@ -1,6 +1,6 @@
 import { CommonModule } from '@angular/common';
 import { Component } from '@angular/core';
-import { AbstractControl, FormArray, FormBuilder, FormGroup, ReactiveFormsModule, ValidationErrors, Validators } from '@angular/forms';
+import { AbstractControl, FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { RouterModule } from '@angular/router';
 
 @Component({
@@ -13,37 +13,16 @@ export class CreateCourseComponent {
   courseForm: FormGroup;
   submitted = false;
 
-  availableRoles = [
-    { id: 'ADMIN', label: 'Administrador' },
-    { id: 'PROFESOR', label: 'Profesor' },
-    { id: 'ESTUDIANTE', label: 'Estudiante' }
-  ];
-
   constructor(private readonly fb: FormBuilder) {
     this.courseForm = this.fb.group(
       {
         name: ['', [Validators.required, Validators.minLength(3)]],
-        email: ['', [Validators.required, Validators.email]],
-        password: [
-          '',
-          [
-            Validators.required,
-            Validators.minLength(6),
-            Validators.pattern(/^(?=.*[A-Za-z])(?=.*\d).{6,}$/)
-          ]
-        ],
-        confirmPassword: ['', [Validators.required]],
-        roles: this.buildRoles()
-      },
-      {
-        validators: [this.passwordsMatchValidator, this.atLeastOneRoleValidator]
+        type: ['', [Validators.required]],
+        period: ['', [Validators.required,]],
+        startDate: ['', [Validators.required]],
+        endDate: ['', [Validators.required]],
+        observations: ['']
       }
-    );
-  }
-
-  buildRoles(): FormArray {
-    return this.fb.array(
-      this.availableRoles.map(() => this.fb.control(false))
     );
   }
 
@@ -51,42 +30,20 @@ export class CreateCourseComponent {
     return this.courseForm.get('name');
   }
 
-  get email(): AbstractControl | null {
-    return this.courseForm.get('email');
+  get type(): AbstractControl | null {
+    return this.courseForm.get('type');
   }
 
-  get password(): AbstractControl | null {
-    return this.courseForm.get('password');
+  get period(): AbstractControl | null {
+    return this.courseForm.get('period');
   }
 
-  get confirmPassword(): AbstractControl | null {
-    return this.courseForm.get('confirmPassword');
+  get startDate(): AbstractControl | null {
+    return this.courseForm.get('startDate');
   }
 
-  get roles(): FormArray {
-    return this.courseForm.get('roles') as FormArray;
-  }
-
-  passwordsMatchValidator(control: AbstractControl): ValidationErrors | null {
-    const password = control.get('password')?.value;
-    const confirmPassword = control.get('confirmPassword')?.value;
-
-    if (!password || !confirmPassword) {
-      return null;
-    }
-
-    return password === confirmPassword ? null : { passwordsMismatch: true };
-  }
-
-  atLeastOneRoleValidator(control: AbstractControl): ValidationErrors | null {
-    const rolesArray = control.get('roles') as FormArray;
-    if (!rolesArray) return null;
-
-    const atLeastOneSelected = rolesArray.controls.some(
-      (roleControl) => roleControl.value
-    );
-
-    return atLeastOneSelected ? null : { noRoleSelected: true };
+  get endDate(): AbstractControl | null {
+    return this.courseForm.get('endDate');
   }
 
   isInvalid(controlName: string): boolean {
@@ -99,6 +56,15 @@ export class CreateCourseComponent {
     return !!control && control.valid && (control.touched || this.submitted);
   }
 
+  formatedDate(date: string): string {
+    const newDate = new Date(date);
+    const year = newDate.getFullYear();
+    const month = String(newDate.getMonth() + 1).padStart(2, '0');
+    const day = String(newDate.getDate()).padStart(2, '0');
+
+    return `${year}/${month}/${day}`;
+  }
+
   onSubmit(): void {
     this.submitted = true;
     this.courseForm.markAllAsTouched();
@@ -107,18 +73,16 @@ export class CreateCourseComponent {
       return;
     }
 
-    const selectedRoles = this.roles.controls
-      .map((control, index) => (control.value ? this.availableRoles[index].id : null))
-      .filter((role) => role !== null);
-
     const formValue = {
       name: this.courseForm.value.name,
-      email: this.courseForm.value.email,
-      password: this.courseForm.value.password,
-      roles: selectedRoles
+      type: this.courseForm.value.type,
+      period: this.courseForm.value.period,
+      startDate: this.formatedDate(this.courseForm.value.startDate),
+      endDate: this.formatedDate(this.courseForm.value.endDate),
+      observations: this.courseForm.value.observations
     };
 
-    console.log('Usuario creado:', formValue);
+    console.log('Curso creado:', formValue);
 
     // Llamar tu servicio
 

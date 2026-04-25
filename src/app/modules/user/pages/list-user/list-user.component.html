@@ -15,15 +15,17 @@
                 </tr>
             </thead>
             <tbody>
+                @for (user of users; track $index) {
                 <tr>
-                    <td>Mark</td>
-                    <td>correo&#64;correo.com</td>
+                    <td>{{ user.user.name }}</td>
+                    <td>{{ user.user.email }}</td>
                     <td>
-                        <a [routerLink]="[`/users/${'1'}/roles`]" class="btn btn-success"><i class="material-icons">
+                        <a [routerLink]="['/users', user.user.id, 'roles']" class="btn btn-success"><i class="material-icons">
                                 supervised_user_circle
                             </i></a>
                     </td>
                 </tr>
+                }
             </tbody>
         </table>
     </section>

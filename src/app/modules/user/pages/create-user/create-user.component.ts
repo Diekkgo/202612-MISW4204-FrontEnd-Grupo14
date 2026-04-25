@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import {
   FormArray,
@@ -9,7 +9,10 @@ import {
   AbstractControl,
   ValidationErrors
 } from '@angular/forms';
-import { RouterModule } from '@angular/router';
+import { Router, RouterModule } from '@angular/router';
+import { CreateUserModel } from '../../models/http/users.interface';
+import { UserService } from '../../services/user.service';
+import Swal from 'sweetalert2';
 
 @Component({
   selector: 'app-create-user',
@@ -23,10 +26,13 @@ export class CreateUserComponent {
   submitted = false;
 
   availableRoles = [
-    { id: 'ADMIN', label: 'Administrador' },
-    { id: 'PROFESOR', label: 'Profesor' },
-    { id: 'ESTUDIANTE', label: 'Estudiante' }
+    { id: 1, label: 'Administrador' },
+    { id: 2, label: 'Profesor' },
+    { id: 3, label: 'Estudiante' }
   ];
+
+  private readonly userService = inject(UserService);
+  private readonly router = inject(Router);
 
   constructor(private readonly fb: FormBuilder) {
     this.userForm = this.fb.group(
@@ -48,6 +54,46 @@ export class CreateUserComponent {
         validators: [this.passwordsMatchValidator, this.atLeastOneRoleValidator]
       }
     );
+  }
+
+  createUser(user: CreateUserModel) {
+    this.userService.createUser(user).subscribe({
+      next: (response) => {
+        if (response) {
+          Swal.mixin({
+            toast: true,
+            position: "top-end",
+            showConfirmButton: false,
+            timer: 3000,
+            timerProgressBar: true,
+            didOpen: (toast) => {
+              toast.onmouseenter = Swal.stopTimer;
+              toast.onmouseleave = Swal.resumeTimer;
+            }
+          }).fire({
+            icon: "success",
+            title: `Usuario creado exitosamente`
+          });
+
+          this.router.navigate(['/users']);
+        } else {
+          Swal.mixin({
+            toast: true,
+            position: "top-end",
+            showConfirmButton: false,
+            timer: 3000,
+            timerProgressBar: true,
+            didOpen: (toast) => {
+              toast.onmouseenter = Swal.stopTimer;
+              toast.onmouseleave = Swal.resumeTimer;
+            }
+          }).fire({
+            icon: "error",
+            title: `Error al crear usuario`
+          });
+        }
+      }
+    })
   }
 
   buildRoles(): FormArray {
@@ -120,16 +166,13 @@ export class CreateUserComponent {
       .map((control, index) => (control.value ? this.availableRoles[index].id : null))
       .filter((role) => role !== null);
 
-    const formValue = {
-      fullName: this.userForm.value.fullName,
+    const formValue: CreateUserModel = {
+      name: this.userForm.value.fullName,
       email: this.userForm.value.email,
       password: this.userForm.value.password,
       roles: selectedRoles
     };
 
-    console.log('Usuario creado:', formValue);
-
-    // Llamar tu servicio
-
+    this.createUser(formValue);
   }
 }

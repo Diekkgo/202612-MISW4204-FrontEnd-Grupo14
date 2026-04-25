@@ -6,7 +6,7 @@
         <h1 class="text-center my-4">Crear Usuario</h1>
 
         <div class="col-md-6">
-            <label for="fullName" class="form-label">Nombre completo</label>
+            <label for="fullName" class="form-label">Nombre completo: </label>
             <input id="fullName" type="text" class="form-control" formControlName="fullName"
                 [class.is-invalid]="isInvalid('fullName')" [class.is-valid]="isValid('fullName')"
                 placeholder="Ej: Juan Pérez" />
@@ -20,7 +20,7 @@
         </div>
 
         <div class="col-md-6">
-            <label for="email" class="form-label">Correo electrónico</label>
+            <label for="email" class="form-label">Correo electrónico: </label>
             <input id="email" type="email" class="form-control" formControlName="email"
                 [class.is-invalid]="isInvalid('email')" [class.is-valid]="isValid('email')"
                 placeholder="Ej: usuario@correo.com" />
@@ -34,7 +34,7 @@
         </div>
 
         <div class="col-md-6">
-            <label for="password" class="form-label">Contraseña</label>
+            <label for="password" class="form-label">Contraseña: </label>
             <input id="password" type="password" class="form-control" formControlName="password"
                 [class.is-invalid]="isInvalid('password')" [class.is-valid]="isValid('password')"
                 placeholder="Mínimo 6 caracteres" />
@@ -51,7 +51,7 @@
         </div>
 
         <div class="col-md-6">
-            <label for="confirmPassword" class="form-label">Confirmar contraseña</label>
+            <label for="confirmPassword" class="form-label">Confirmar contraseña: </label>
             <input id="confirmPassword" type="password" class="form-control" formControlName="confirmPassword"
                 [class.is-invalid]="isInvalid('confirmPassword') || (userForm.errors?.['passwordsMismatch'] && (confirmPassword?.touched || submitted))"
                 [class.is-valid]="isValid('confirmPassword') && !userForm.errors?.['passwordsMismatch']"
@@ -67,7 +67,7 @@
         </div>
 
         <div class="col-12">
-            <label for="" class="form-label d-block">Roles</label>
+            <label for="" class="form-label d-block">Roles: </label>
 
             <div class="roles-wrapper p-3 rounded border"
                 [class.border-danger]="userForm.errors?.['noRoleSelected'] && submitted"
