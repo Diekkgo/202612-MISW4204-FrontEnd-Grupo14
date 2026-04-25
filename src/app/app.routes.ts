@@ -8,11 +8,8 @@ import { TaskDetailComponent } from './modules/tasks/pages/task-detail/task-deta
 import { CreateTaskComponent } from './modules/tasks/pages/create-task/create-task.component';
 import { ListTasksComponent } from './modules/tasks/pages/list-tasks/list-tasks.component';
 import { HomeComponent } from './modules/home/pages/home/home.component';
-import { CreateUserComponent } from './modules/user/pages/create-user/create-user.component';
-import { AssociateRoleComponent } from './modules/user/pages/associate-role/associate-role.component';
-import { ListCourseComponent } from './modules/course/pages/list-course/list-course.component';
-import { CreateCourseComponent } from './modules/course/pages/create-course/create-course.component';
-import { CourseDetailsComponent } from './modules/course/pages/course-details/course-details.component';
+import { ListReportsComponent } from './modules/reports/pages/list-reports/list-reports.component';
+import { GenerateReportsComponent } from './modules/reports/pages/generate-reports/generate-reports.component';
 
 export const routes: Routes = [
     {
@@ -58,6 +55,14 @@ export const routes: Routes = [
     {
         path:'tasks/:id/edit',
         component:EditTaskComponent
+    },
+    {
+        path: 'reports',
+        component: ListReportsComponent
+    },
+    {
+        path: 'reports/generate',
+        component: GenerateReportsComponent
     },
     {
         path: '',
