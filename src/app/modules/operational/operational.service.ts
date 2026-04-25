@@ -7,125 +7,41 @@ import {
   WeeklyHistoryItem,
   WeekOption
 } from './operational.model';
+import { Weeks } from '../weeks/weeks.model';
+import { environment } from '../../../environments/environment';
+import { HttpClient, HttpHeaders } from '@angular/common/http';
 
 @Injectable({
   providedIn: 'root'
 })
 export class OperationalService {
-  getParticipations(): Observable<UserParticipation[]> {
-    return of([
-      {
-        assignmentId: 'a1',
-        type: 'COURSE',
-        name: 'Arquitectura de Software',
-        professorName: 'Carlos Rodríguez',
-        hoursPerWeek: 10,
-        startDate: '2026-01-20',
-        endDate: '2026-05-30',
-        isActive: true
-      },
-      {
-        assignmentId: 'a2',
-        type: 'PROJECT',
-        name: 'Proyecto de Analítica',
-        professorName: 'María González',
-        hoursPerWeek: 8,
-        startDate: '2026-02-01',
-        endDate: '2026-06-01',
-        isActive: true
-      }
-    ]);
+  private apiUrl = environment.urlBase;
+  private professorId = 'a0000000-0000-0000-0000-000000000001';
+  private token = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyX2lkIjoiZTJmYzU3OWItMjk1YS00NTE0LWFmZDAtYTRhMzZlYTEwY2Q0IiwiZW1haWwiOiJ0ZXN0QHRlc3QuY29tIiwiaXNzIjoidGFza3MtdHJhY2tpbmctYXBpIiwiZXhwIjoxNzc3MTc1ODQ0LCJuYmYiOjE3NzcwODk0NDQsImlhdCI6MTc3NzA4OTQ0NH0.jaYZ5dF9irJ3W13JeSsMmT8v2pYhh-wDs4dBJuvD11U';
+  private headers = new HttpHeaders({
+      Authorization: `Bearer ${this.token}`,
+      'Content-Type': 'application/json'
+  });
+
+  constructor(private http: HttpClient) {}
+  
+  getCourses(userId: string): Observable<UserParticipation[]> {
+      return this.http.get<UserParticipation[]>(`${this.apiUrl}courses/${userId}`, { headers: this.headers });
   }
 
-  getMyTasks(): Observable<UserTaskRecord[]> {
-    return of([
-      {
-        taskId: 't1',
-        assignmentId: 'a1',
-        assignmentName: 'Arquitectura de Software',
-        weekId: 'w1',
-        weekLabel: '2026-04-20 a 2026-04-26',
-        title: 'Preparación de laboratorio',
-        description: 'Creación de material de apoyo',
-        hours: 4,
-        status: 'COMPLETED',
-        createdAt: '2026-04-22'
-      },
-      {
-        taskId: 't2',
-        assignmentId: 'a2',
-        assignmentName: 'Proyecto de Analítica',
-        weekId: 'w1',
-        weekLabel: '2026-04-20 a 2026-04-26',
-        title: 'Revisión de resultados',
-        description: 'Análisis de métricas del proyecto',
-        hours: 3,
-        status: 'PENDING',
-        createdAt: '2026-04-23'
-      }
-    ]);
+  getMyTasks(userId: string): Observable<UserTaskRecord[]> {
+      return this.http.get<UserTaskRecord[]>(`${this.apiUrl}tasks/${userId}`, { headers: this.headers });
   }
 
-  getHistory(): Observable<WeeklyHistoryItem[]> {
-    return of([
-      {
-        weekId: 'w1',
-        weekStartDate: '2026-04-20',
-        weekEndDate: '2026-04-26',
-        totalReportedHours: 7,
-        totalTasks: 2,
-        status: 'REPORTED'
-      },
-      {
-        weekId: 'w2',
-        weekStartDate: '2026-04-27',
-        weekEndDate: '2026-05-03',
-        totalReportedHours: 8,
-        totalTasks: 3,
-        status: 'REPORTED'
-      }
-    ]);
+  getHistory(userId: string): Observable<WeeklyHistoryItem[]> {
+      return this.http.get<WeeklyHistoryItem[]>(`${this.apiUrl}history/${userId}`, { headers: this.headers });
   }
 
   getHistoryDetail(weekId: string): Observable<WeeklyHistoryDetail> {
-    return of({
-      weekId,
-      weekStartDate: '2026-04-20',
-      weekEndDate: '2026-04-26',
-      totalReportedHours: 7,
-      tasks: [
-        {
-          taskId: 't1',
-          assignmentId: 'a1',
-          assignmentName: 'Arquitectura de Software',
-          weekId: 'w1',
-          weekLabel: '2026-04-20 a 2026-04-26',
-          title: 'Preparación de laboratorio',
-          description: 'Creación de material de apoyo',
-          hours: 4,
-          status: 'COMPLETED',
-          createdAt: '2026-04-22'
-        },
-        {
-          taskId: 't2',
-          assignmentId: 'a2',
-          assignmentName: 'Proyecto de Analítica',
-          weekId: 'w1',
-          weekLabel: '2026-04-20 a 2026-04-26',
-          title: 'Revisión de resultados',
-          description: 'Análisis de métricas del proyecto',
-          hours: 3,
-          status: 'PENDING',
-          createdAt: '2026-04-23'
-        }
-      ]
-    });
+      return this.http.get<WeeklyHistoryDetail>(`${this.apiUrl}history/${this.professorId}/weeks/${weekId}/detail`, { headers: this.headers });
   }
 
-  getWeeks(): Observable<WeekOption[]> {
-    return of([
-      { id: 'w1', label: 'Semana 1 - 2026-04-20 a 2026-04-26' },
-      { id: 'w2', label: 'Semana 2 - 2026-04-27 a 2026-05-03' }
-    ]);
+  getWeeks(): Observable<Weeks[]> {
+      return this.http.get<Weeks[]>(`${this.apiUrl}weeks`, { headers: this.headers });
   }
 }

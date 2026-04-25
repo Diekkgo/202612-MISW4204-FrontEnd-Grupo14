@@ -8,8 +8,8 @@
     <div class="header-actions">
       <select [(ngModel)]="selectedWeekId" (change)="filterTasks()" class="select-week">
         <option value="">Todas las semanas</option>
-        <option *ngFor="let week of weeks" [value]="week.id">
-          {{ week.label }}
+        <option *ngFor="let week of weeks" [value]="week.ID">
+          {{ week.StartDate | date:'dd/MM/yyyy':'UTC' }} a {{ week.EndDate | date:'dd/MM/yyyy':'UTC' }}
         </option>
       </select>
 

@@ -9,6 +9,7 @@ import {
   WeekOption
 } from '../operational.model';
 import { OperationalService } from '../operational.service';
+import { Weeks } from '../../weeks/weeks.model';
 
 @Component({
   selector: 'app-operational',
@@ -27,9 +28,11 @@ export class OperationalComponent implements OnInit {
   history: WeeklyHistoryItem[] = [];
   historyDetail: WeeklyHistoryDetail | null = null;
 
-  weeks: WeekOption[] = [];
+  weeks: Weeks[] = [];
   selectedWeekId = '';
   search = '';
+
+  userId = 'a0000000-0000-0000-0000-000000000001';
 
   showTasksModal = false;
   showHistoryModal = false;
@@ -45,21 +48,21 @@ export class OperationalComponent implements OnInit {
   }
 
   loadParticipations(): void {
-    this.operativeViewService.getParticipations().subscribe(data => {
+    this.operativeViewService.getCourses(this.userId).subscribe(data => {
       this.participations = data;
       this.filteredParticipations = data;
     });
   }
 
   loadTasks(): void {
-    this.operativeViewService.getMyTasks().subscribe(data => {
+    this.operativeViewService.getMyTasks(this.userId).subscribe(data => {
       this.tasks = data;
       this.filteredTasks = data;
     });
   }
 
   loadHistory(): void {
-    this.operativeViewService.getHistory().subscribe(data => {
+    this.operativeViewService.getHistory(this.userId).subscribe(data => {
       this.history = data;
     });
   }
