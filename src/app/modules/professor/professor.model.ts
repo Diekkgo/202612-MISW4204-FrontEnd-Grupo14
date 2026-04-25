@@ -1,20 +1,21 @@
-export interface SupervisedPerson {
-  userId: string;
-  name: string;
-  email: string;
-  role: 'MONITOR' | 'ASISTENTE_GRADUADO';
-  assignmentsCount: number;
-  activeAssignments: number;
+export interface Student {
+  UserID: string;
+  Name: string;
+  Email: string;
+  Role: string;
 }
 
-export interface AssignmentView {
-  assignmentId: string;
-  type: 'COURSE' | 'PROJECT';
-  name: string;
-  hoursPerWeek: number;
-  startDate: string;
-  endDate: string;
-  isActive: boolean;
+export interface Course {
+  ID: string;
+  Name: string;
+  Type: string;
+  ProfessorID: string;
+  PeriodID: string;
+  StartDate: string;
+  EndDate: string;
+  Status: string;
+  Observations: string;
+  CreatedAt: string;
 }
 
 export interface WeeklyTaskView {

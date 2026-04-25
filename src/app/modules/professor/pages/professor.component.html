@@ -8,8 +8,8 @@
     <div class="header-actions">
       <select [(ngModel)]="selectedWeekId" class="select-week">
         <option value="">Seleccione una semana</option>
-        <option *ngFor="let week of weeks" [value]="week.id">
-          {{ week.label }}
+        <option *ngFor="let week of weeks" [value]="week.ID">
+          {{ week.StartDate | date:'dd/MM/yyyy':'UTC' }} a {{ week.EndDate | date:'dd/MM/yyyy':'UTC' }}
         </option>
       </select>
 
@@ -34,26 +34,16 @@
         <tr>
           <th>Nombre</th>
           <th>Correo</th>
-          <th>Rol</th>
-          <th>Vinculaciones</th>
-          <th>Activas</th>
           <th>Acciones</th>
         </tr>
       </thead>
       <tbody>
         <tr *ngFor="let person of filteredPeople">
-          <td>{{ person.name }}</td>
-          <td>{{ person.email }}</td>
-          <td>
-            <span class="role-badge">
-              {{ getRoleLabel(person.role) }}
-            </span>
-          </td>
-          <td>{{ person.assignmentsCount }}</td>
-          <td>{{ person.activeAssignments }}</td>
+          <td>{{ person.Name }}</td>
+          <td>{{ person.Email }}</td>
           <td>
             <div class="action-buttons">
-              <button class="btn-secondary" (click)="openAssignments(person)">
+              <button class="btn-secondary" (click)="openCourses(person)">
                 Vinculaciones
               </button>
               <button class="btn-secondary" (click)="openWeeklyDetail(person)">
@@ -89,20 +79,18 @@
           <tr>
             <th>Tipo</th>
             <th>Nombre</th>
-            <th>Horas/semana</th>
             <th>Inicio</th>
             <th>Fin</th>
             <th>Estado</th>
           </tr>
         </thead>
         <tbody>
-          <tr *ngFor="let assignment of assignments">
-            <td>{{ assignment.type === 'COURSE' ? 'Curso' : 'Proyecto' }}</td>
-            <td>{{ assignment.name }}</td>
-            <td>{{ assignment.hoursPerWeek }}</td>
-            <td>{{ assignment.startDate }}</td>
-            <td>{{ assignment.endDate }}</td>
-            <td>{{ assignment.isActive ? 'Activa' : 'Inactiva' }}</td>
+          <tr *ngFor="let course of courses">
+            <td>{{ course.Type === 'COURSE' ? 'Curso' : 'Proyecto' }}</td>
+            <td>{{ course.Name }}</td>
+            <td>{{ course.StartDate | date:'dd/MM/yyyy':'UTC' }}</td>
+            <td>{{ course.EndDate | date:'dd/MM/yyyy':'UTC' }}</td>
+            <td>{{ course.Status }}</td>
           </tr>
         </tbody>
       </table>

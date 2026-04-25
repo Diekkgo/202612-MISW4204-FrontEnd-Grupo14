@@ -2,15 +2,16 @@ import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import {
-  AssignmentView,
+  Course,
+  Student,
   PersonSummary,
   ProfessorTaskView,
   ReportedVsContracted,
-  SupervisedPerson,
   WeeklyDetail,
   WeekOption
 } from '../professor.model';
 import { ProfessorService } from '../professor.service';
+import { Weeks } from '../../weeks/weeks.model';
 
 @Component({
   selector: 'app-professor',
@@ -20,14 +21,14 @@ import { ProfessorService } from '../professor.service';
   styleUrls: ['./professor.component.css']
 })
 export class ProfessorComponent implements OnInit {
-  supervisedPeople: SupervisedPerson[] = [];
-  filteredPeople: SupervisedPerson[] = [];
-  assignments: AssignmentView[] = [];
+  supervisedPeople: Student[] = [];
+  filteredPeople: Student[] = [];
+  courses: Course[] = [];
   weeklyDetail: WeeklyDetail | null = null;
   summary: PersonSummary | null = null;
   tasks: ProfessorTaskView[] = [];
   reportedVsContracted: ReportedVsContracted[] = [];
-  weeks: WeekOption[] = [];
+  weeks: Weeks[] = [];
 
   search = '';
   selectedWeekId = '';
@@ -50,7 +51,7 @@ export class ProfessorComponent implements OnInit {
   }
 
   loadPeople(): void {
-    this.professorViewService.getSupervisedPeople().subscribe((data: SupervisedPerson[]) => {
+    this.professorViewService.getStudents().subscribe((data: Student[]) => {
       this.supervisedPeople = data;
       this.filteredPeople = data;
     });
@@ -60,13 +61,13 @@ export class ProfessorComponent implements OnInit {
     this.professorViewService.getWeeks().subscribe(data => {
       this.weeks = data;
       if (data.length > 0) {
-        this.selectedWeekId = data[0].id;
+        this.selectedWeekId = data[0].ID;
       }
     });
   }
 
   loadTasks(): void {
-    this.professorViewService.getTasksByProfessor().subscribe(data => {
+    this.professorViewService.getTasksByProfessor(this.selectedWeekId).subscribe(data => {
       this.tasks = data;
     });
   }
@@ -80,39 +81,39 @@ export class ProfessorComponent implements OnInit {
     }
 
     this.filteredPeople = this.supervisedPeople.filter(person =>
-      person.name.toLowerCase().includes(term) ||
-      person.email.toLowerCase().includes(term) ||
-      person.role.toLowerCase().includes(term)
+      person.Name.toLowerCase().includes(term) ||
+      person.Email.toLowerCase().includes(term) ||
+      person.Role.toLowerCase().includes(term)
     );
   }
 
-  openAssignments(person: SupervisedPerson): void {
-    this.selectedPersonId = person.userId;
-    this.selectedPersonName = person.name;
+  openCourses(person: Student): void {
+    this.selectedPersonId = person.UserID;
+    this.selectedPersonName = person.Name;
 
-    this.professorViewService.getAssignmentsByPerson(person.userId).subscribe(data => {
-      this.assignments = data;
+    this.professorViewService.getCoursesByPerson(this.selectedPersonId).subscribe(data => {
+      this.courses = data;
       this.showAssignmentsModal = true;
     });
   }
 
-  openWeeklyDetail(person: SupervisedPerson): void {
-    this.selectedPersonId = person.userId;
-    this.selectedPersonName = person.name;
+  openWeeklyDetail(person: Student): void {
+    this.selectedPersonId = person.UserID;
+    this.selectedPersonName = person.Name;
 
     if (!this.selectedWeekId) return;
 
-    this.professorViewService.getWeeklyDetail(person.userId, this.selectedWeekId).subscribe(data => {
+    this.professorViewService.getWeeklyDetail(person.UserID).subscribe(data => {
       this.weeklyDetail = data;
       this.showWeeklyDetailModal = true;
     });
   }
 
-  openSummary(person: SupervisedPerson): void {
-    this.selectedPersonId = person.userId;
-    this.selectedPersonName = person.name;
+  openSummary(person: Student): void {
+    this.selectedPersonId = person.UserID;
+    this.selectedPersonName = person.Name;
 
-    this.professorViewService.getPersonSummary(person.userId).subscribe(data => {
+    this.professorViewService.getConsolidated(person.UserID).subscribe(data => {
       this.summary = data;
       this.showSummaryModal = true;
     });
