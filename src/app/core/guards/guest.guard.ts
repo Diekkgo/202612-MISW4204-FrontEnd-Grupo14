@@ -2,14 +2,13 @@ import { inject } from '@angular/core';
 import { CanActivateFn, Router } from '@angular/router';
 import { TokenService } from '../services/token.service';
 
-export const authGuard: CanActivateFn = () => {
+export const guestGuard: CanActivateFn = () => {
   const tokenService = inject(TokenService);
   const router = inject(Router);
 
   if (tokenService.hasToken()) {
-    return true;
+    return router.createUrlTree(['/assignments']);
   }
 
-  tokenService.clearSession();
-  return router.createUrlTree(['/auth']);
+  return true;
 };
