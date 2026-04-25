@@ -1,0 +1,78 @@
+<section class="page">
+  <div class="page-header">
+    <div>
+      <h1>Reportes</h1>
+      <p>Consulta y descarga los reportes semanales de actividades.</p>
+    </div>
+
+    @if (isProfesor) {
+      <button type="button" class="primary" (click)="goToGenerate()">Generar reportes</button>
+    }
+  </div>
+
+  <form class="card filters" [formGroup]="filtersForm" (ngSubmit)="loadReports()">
+    <div class="field">
+      <label for="weekId">Semana</label>
+      <select id="weekId" formControlName="weekId">
+        <option value="">Todas</option>
+        @for (week of weeks; track week.id) {
+          <option [value]="week.id">{{ week.label }}</option>
+        }
+      </select>
+    </div>
+
+    <div class="actions">
+      <button type="submit">Buscar</button>
+      <button type="button" class="secondary" (click)="clearFilters()">Limpiar</button>
+    </div>
+  </form>
+
+  @if (successMessage) {
+    <div class="alert success">{{ successMessage }}</div>
+  }
+
+  @if (errorMessage) {
+    <div class="alert error">{{ errorMessage }}</div>
+  }
+
+  <div class="card table-card">
+    @if (loading) {
+      <p>Cargando reportes...</p>
+    } @else if (reports.length === 0) {
+      <p>No hay reportes para mostrar.</p>
+    } @else {
+      <table>
+        <thead>
+          <tr>
+            <th>Monitor / Asistente</th>
+            <th>Semana</th>
+            <th>Horas totales</th>
+            <th>Fecha generación</th>
+            <th>Acciones</th>
+          </tr>
+        </thead>
+
+        <tbody>
+          @for (report of reports; track report.report_id) {
+            <tr>
+              <td>{{ report.user_name }}</td>
+              <td>{{ getWeekLabel(report.week_id) }}</td>
+              <td>{{ report.total_hours }}</td>
+              <td>{{ formatDate(report.generated_at) }}</td>
+              <td>
+                <button
+                  type="button"
+                  class="table-action"
+                  [disabled]="downloading === report.report_id"
+                  (click)="download(report)"
+                >
+                  {{ downloading === report.report_id ? 'Descargando...' : 'Descargar' }}
+                </button>
+              </td>
+            </tr>
+          }
+        </tbody>
+      </table>
+    }
+  </div>
+</section>
