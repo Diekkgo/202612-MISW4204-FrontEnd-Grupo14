@@ -37,7 +37,6 @@
           <th>Tipo</th>
           <th>Nombre</th>
           <th>Profesor</th>
-          <th>Horas/semana</th>
           <th>Inicio</th>
           <th>Fin</th>
           <th>Estado</th>
@@ -47,15 +46,16 @@
         <tr *ngFor="let item of filteredParticipations">
           <td>
             <span class="type-badge">
-              {{ getTypeLabel(item.type) }}
+              {{ getTypeLabel(item.course_type) }}
             </span>
           </td>
-          <td>{{ item.name }}</td>
-          <td>{{ item.professorName }}</td>
-          <td>{{ item.hoursPerWeek }}</td>
-          <td>{{ item.startDate }}</td>
-          <td>{{ item.endDate }}</td>
-          <td>{{ item.isActive ? 'Activa' : 'Inactiva' }}</td>
+          <td>{{ item.course_name }}</td>
+          <td>{{ item.professor }}</td>
+          <td>{{ item.start_date }}</td>
+          <td>{{ item.end_date }}</td>
+          <td><span class="status-badge" [ngClass]="getStatusClass(item.status)">
+            {{ item.status }}
+          </span></td>
         </tr>
 
         <tr *ngIf="filteredParticipations.length === 0">
@@ -131,7 +131,6 @@
             <th>Total horas</th>
             <th>Total tareas</th>
             <th>Estado</th>
-            <th>Acción</th>
           </tr>
         </thead>
         <tbody>
@@ -143,11 +142,6 @@
               <span class="status-badge" [ngClass]="getStatusClass(item.status)">
                 {{ item.status }}
               </span>
-            </td>
-            <td>
-              <button class="btn-secondary" (click)="openHistoryDetail(item.weekId)">
-                Ver detalle
-              </button>
             </td>
           </tr>
 

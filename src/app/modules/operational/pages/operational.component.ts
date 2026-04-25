@@ -82,9 +82,9 @@ export class OperationalComponent implements OnInit {
     }
 
     this.filteredParticipations = this.participations.filter(item =>
-      item.name.toLowerCase().includes(term) ||
-      item.professorName.toLowerCase().includes(term) ||
-      item.type.toLowerCase().includes(term)
+      item.course_name.toLowerCase().includes(term) ||
+      item.professor.toLowerCase().includes(term) ||
+      item.course_type.toLowerCase().includes(term)
     );
   }
 
@@ -125,11 +125,11 @@ export class OperationalComponent implements OnInit {
 
   getStatusClass(status: string): string {
     switch (status) {
-      case 'REPORTED':
+      case 'ACTIVE':
         return 'status-reported';
       case 'PENDING':
         return 'status-pending';
-      case 'COMPLETED':
+      case 'CLOSED':
         return 'status-completed';
       default:
         return '';

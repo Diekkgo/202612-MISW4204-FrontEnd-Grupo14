@@ -1,12 +1,10 @@
 export interface UserParticipation {
-  assignmentId: string;
-  type: 'COURSE' | 'PROJECT';
-  name: string;
-  professorName: string;
-  hoursPerWeek: number;
-  startDate: string;
-  endDate: string;
-  isActive: boolean;
+  course_name: string;
+  course_type: 'COURSE' | 'PROJECT';
+  professor: string;
+  start_date: string;
+  end_date: string;
+  status: string;
 }
 
 export interface UserTaskRecord {
