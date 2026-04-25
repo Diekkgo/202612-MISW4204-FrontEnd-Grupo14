@@ -1,6 +1,9 @@
 <nav class="navbar navbar-light bg-secondary">
   <div class="container-fluid">
-    <span class="navbar-brand">GestorApp</span>
+    <div style="display: flex; flex-direction: row; align-items: center;">
+      <span class="navbar-brand">GestorApp</span>
+      <app-notification></app-notification>
+    </div>
 
     <div class="d-flex align-items-center gap-3">
       <a class="nav-link" routerLink="/home" routerLinkActive="active">Inicio</a>
@@ -8,6 +11,9 @@
       <a class="nav-link" routerLink="/assignments" routerLinkActive="active">Asignaciones</a>
       <a class="nav-link" routerLink="/tasks" routerLinkActive="active">Tareas</a>
       <a class="nav-link" routerLink="/reports" routerLinkActive="active">Reportes</a>
+      <a *ngIf="isAdmin || isProfessor" class="nav-link" routerLink="/professor" routerLinkActive="active">Profesor</a>
+      <a *ngIf="isAdmin || !isProfessor" class="nav-link" routerLink="/student-monitor" routerLinkActive="active">Estudiante/Monitor</a>
+      <app-list-weeks-modal *ngIf="isAdmin || isProfessor"></app-list-weeks-modal>
       <button class="btn btn-secondary" type="button" (click)="logout()">
         <i class="material-icons" style="vertical-align: middle; font-size: 1.2rem;">exit_to_app</i> Cerrar sesión
       </button>

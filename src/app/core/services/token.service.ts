@@ -2,6 +2,7 @@ import { inject, Injectable } from '@angular/core';
 import { Router } from '@angular/router';
 
 import { LoginResponse } from '../../modules/auth/models/auth.model';
+import { BehaviorSubject } from 'rxjs';
 
 @Injectable({
   providedIn: 'root'
@@ -11,11 +12,15 @@ export class TokenService {
   private readonly USER_KEY = 'auth_user';
   private readonly ROLES_KEY = 'auth_roles';
   private readonly router = inject(Router);
+  private rolesSubject = new BehaviorSubject<string[]>(this.getRoles());
+  roles$ = this.rolesSubject.asObservable();
 
   setSession(auth: LoginResponse): void {
     localStorage.setItem(this.TOKEN_KEY, auth.token);
     localStorage.setItem(this.USER_KEY, JSON.stringify(auth.user));
     localStorage.setItem(this.ROLES_KEY, JSON.stringify(auth.roles));
+
+    this.rolesSubject.next(this.getRoles());
   }
 
   getToken(): string | null {

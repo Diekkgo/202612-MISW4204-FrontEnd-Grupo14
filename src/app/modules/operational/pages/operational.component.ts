@@ -10,6 +10,7 @@ import {
 } from '../operational.model';
 import { OperationalService } from '../operational.service';
 import { Weeks } from '../../weeks/weeks.model';
+import { TokenService } from '../../../core/services/token.service';
 
 @Component({
   selector: 'app-operational',
@@ -32,19 +33,22 @@ export class OperationalComponent implements OnInit {
   selectedWeekId = '';
   search = '';
 
-  userId = 'a0000000-0000-0000-0000-000000000001';
+  userId: string = '';
 
   showTasksModal = false;
   showHistoryModal = false;
   showHistoryDetailModal = false;
 
-  constructor(private operativeViewService: OperationalService) {}
+  constructor(private operativeViewService: OperationalService, private tokenService: TokenService) {}
 
   ngOnInit(): void {
-    this.loadParticipations();
-    this.loadTasks();
-    this.loadHistory();
+    let user = this.tokenService.getUser();
+    if (user) {
+      this.userId = user.id;
+    }
+
     this.loadWeeks();
+    this.loadParticipations();
   }
 
   loadParticipations(): void {
@@ -55,14 +59,16 @@ export class OperationalComponent implements OnInit {
   }
 
   loadTasks(): void {
-    this.operativeViewService.getMyTasks(this.userId).subscribe(data => {
+    this.operativeViewService.getMyTasks(this.userId, this.selectedWeekId).subscribe(data => {
       this.tasks = data;
       this.filteredTasks = data;
+
+      this.filterTasks();
     });
   }
 
   loadHistory(): void {
-    this.operativeViewService.getHistory(this.userId).subscribe(data => {
+    this.operativeViewService.getHistory(this.userId, this.selectedWeekId).subscribe(data => {
       this.history = data;
     });
   }
@@ -70,6 +76,10 @@ export class OperationalComponent implements OnInit {
   loadWeeks(): void {
     this.operativeViewService.getWeeks().subscribe(data => {
       this.weeks = data;
+      
+      if (data.length > 0) {
+        this.selectedWeekId = data[0].ID;
+      }
     });
   }
 
@@ -89,6 +99,11 @@ export class OperationalComponent implements OnInit {
   }
 
   filterTasks(): void {
+    if(!this.tasks) {
+      this.filteredTasks = [];
+      return;
+    }
+
     if (!this.selectedWeekId) {
       this.filteredTasks = this.tasks;
       return;
@@ -98,19 +113,13 @@ export class OperationalComponent implements OnInit {
   }
 
   openTasksModal(): void {
-    this.filterTasks();
+    this.loadTasks();
     this.showTasksModal = true;
   }
 
   openHistoryModal(): void {
+    this.loadHistory();
     this.showHistoryModal = true;
-  }
-
-  openHistoryDetail(weekId: string): void {
-    this.operativeViewService.getHistoryDetail(weekId).subscribe(data => {
-      this.historyDetail = data;
-      this.showHistoryDetailModal = true;
-    });
   }
 
   closeModals(): void {

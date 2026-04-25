@@ -92,6 +92,12 @@
             <td>{{ course.EndDate | date:'dd/MM/yyyy':'UTC' }}</td>
             <td>{{ course.Status }}</td>
           </tr>
+
+          <tr *ngIf="!courses || courses.length === 0">
+            <td colspan="6" class="empty-row">
+              No hay vinculaciones.
+            </td>
+          </tr>
         </tbody>
       </table>
     </div>
@@ -99,15 +105,15 @@
 </div>
 
 <!-- Modal detalle semanal -->
-<div class="modal-backdrop" *ngIf="showWeeklyDetailModal && weeklyDetail">
+<div class="modal-backdrop" *ngIf="showWeeklyDetailModal">
   <div class="modal-container modal-xl">
     <div class="modal-header">
-      <h2>Detalle semanal de {{ weeklyDetail.name }}</h2>
+      <h2>Detalle semanal de {{ weeklyDetail?.name }}</h2>
       <button class="btn-close" (click)="closeModals()">×</button>
     </div>
     <div class="modal-body">
       <p class="info-line">
-        Semana: {{ weeklyDetail.weekStartDate }} a {{ weeklyDetail.weekEndDate }}
+        Semana: {{ weeklyDetail?.weekStartDate }} a {{ weeklyDetail?.weekEndDate }}
       </p>
 
       <table class="main-table">
@@ -121,47 +127,52 @@
           </tr>
         </thead>
         <tbody>
-          <tr *ngFor="let task of weeklyDetail.tasks">
+          <tr *ngFor="let task of weeklyDetail?.tasks">
             <td>{{ task.assignmentName }}</td>
             <td>{{ task.title }}</td>
             <td>{{ task.description }}</td>
             <td>{{ task.hours }}</td>
             <td>{{ task.status }}</td>
           </tr>
+          <tr *ngIf="!weeklyDetail?.tasks || weeklyDetail?.tasks?.length === 0">
+            <td colspan="6" class="empty-row">
+              No hay tareas registradas.
+            </td>
+          </tr>
         </tbody>
       </table>
 
       <div class="summary-box">
-        Total horas reportadas: <strong>{{ weeklyDetail.totalReportedHours }}</strong>
+        Total horas reportadas: <strong>{{ weeklyDetail?.totalReportedHours }}</strong>
       </div>
     </div>
   </div>
 </div>
 
 <!-- Modal consolidado -->
-<div class="modal-backdrop" *ngIf="showSummaryModal && summary">
+<div class="modal-backdrop" *ngIf="showSummaryModal">
   <div class="modal-container modal-lg">
     <div class="modal-header">
-      <h2>Vista consolidada de {{ summary.name }}</h2>
+      <h2>Vista consolidada de {{ summary?.name }}</h2>
       <button class="btn-close" (click)="closeModals()">×</button>
     </div>
     <div class="modal-body">
       <div class="summary-grid">
         <div class="summary-card">
           <span>Semanas reportadas</span>
-          <strong>{{ summary.weeksReported }}</strong>
+          <strong>{{ summary?.weeksReported }}</strong>
         </div>
         <div class="summary-card">
           <span>Horas reportadas</span>
-          <strong>{{ summary.totalReportedHours }}</strong>
+          <strong>{{ summary?.totalReportedHours }}</strong>
         </div>
         <div class="summary-card">
           <span>Horas esperadas</span>
-          <strong>{{ summary.totalExpectedHours }}</strong>
+          <strong>{{ summary?.totalExpectedHours }}</strong>
         </div>
         <div class="summary-card">
           <span>Cumplimiento</span>
-          <strong>{{ summary.compliancePercentage }}%</strong>
+          <strong>{{ summary?.compliancePercentage }}%</strong>
         </div>
       </div>
 
@@ -175,11 +186,16 @@
           </tr>
         </thead>
         <tbody>
-          <tr *ngFor="let item of summary.byAssignment">
+          <tr *ngFor="let item of summary?.byAssignment">
             <td>{{ item.assignmentName }}</td>
             <td>{{ item.reportedHours }}</td>
             <td>{{ item.expectedHours }}</td>
             <td>{{ item.reportedHours - item.expectedHours }}</td>
+          </tr>
+          <tr *ngIf="!summary?.byAssignment || summary?.byAssignment?.length === 0">
+            <td colspan="6" class="empty-row">
+              No hay datos para mostrar.
+            </td>
           </tr>
         </tbody>
       </table>
@@ -215,6 +231,11 @@
             <td>{{ task.hours }}</td>
             <td>{{ task.status }}</td>
           </tr>
+          <tr *ngIf="!tasks || tasks.length === 0">
+            <td colspan="6" class="empty-row">
+              No hay tareas.
+            </td>
+          </tr>
         </tbody>
       </table>
     </div>
@@ -237,20 +258,20 @@
             <th>Contratadas</th>
             <th>Reportadas</th>
             <th>Diferencia</th>
-            <th>Estado</th>
           </tr>
         </thead>
         <tbody>
           <tr *ngFor="let item of reportedVsContracted">
-            <td>{{ item.userName }}</td>
-            <td>{{ item.assignmentName }}</td>
-            <td>{{ item.contractedHours }}</td>
-            <td>{{ item.reportedHours }}</td>
-            <td>{{ item.differenceHours }}</td>
-            <td>
-              <span class="status-badge" [ngClass]="getStatusClass(item.status)">
-                {{ item.status }}
-              </span>
+            <td>{{ item.Name }}</td>
+            <td>{{ item.CourseName }}</td>
+            <td>{{ item.ContractedHours }}</td>
+            <td>{{ item.ReportedHours }}</td>
+            <td>{{ item.DifferenceHours }}</td>
+          </tr>
+
+          <tr *ngIf="!reportedVsContracted || reportedVsContracted.length === 0">
+            <td colspan="6" class="empty-row">
+              No hay datos para mostrar.
             </td>
           </tr>
         </tbody>

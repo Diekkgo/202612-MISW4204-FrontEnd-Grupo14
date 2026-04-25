@@ -12,6 +12,8 @@ import {
 } from '../professor.model';
 import { ProfessorService } from '../professor.service';
 import { Weeks } from '../../weeks/weeks.model';
+import { TokenService } from '../../../core/services/token.service';
+import { AuthUser } from '../../auth/models/auth.model';
 
 @Component({
   selector: 'app-professor',
@@ -29,6 +31,8 @@ export class ProfessorComponent implements OnInit {
   tasks: ProfessorTaskView[] = [];
   reportedVsContracted: ReportedVsContracted[] = [];
   weeks: Weeks[] = [];
+  userId: string = '';
+  professorId: string | null = null;
 
   search = '';
   selectedWeekId = '';
@@ -42,16 +46,22 @@ export class ProfessorComponent implements OnInit {
 
   selectedPersonName = '';
 
-  constructor(private professorViewService: ProfessorService) {}
+  constructor(private professorViewService: ProfessorService, private tokenService: TokenService) {}
 
   ngOnInit(): void {
+    let user = this.tokenService.getUser();
+    if (user) {
+      this.professorId = user.id;
+    }
+    
     this.loadPeople();
     this.loadWeeks();
     this.loadTasks();
   }
 
   loadPeople(): void {
-    this.professorViewService.getStudents().subscribe((data: Student[]) => {
+    if (!this.professorId) return;
+    this.professorViewService.getStudents(this.professorId).subscribe((data: Student[]) => {
       this.supervisedPeople = data;
       this.filteredPeople = data;
     });
@@ -67,7 +77,8 @@ export class ProfessorComponent implements OnInit {
   }
 
   loadTasks(): void {
-    this.professorViewService.getTasksByProfessor(this.selectedWeekId).subscribe(data => {
+    if (!this.professorId) return;
+    this.professorViewService.getTasksByProfessor(this.selectedWeekId, this.professorId).subscribe(data => {
       this.tasks = data;
     });
   }
@@ -91,7 +102,9 @@ export class ProfessorComponent implements OnInit {
     this.selectedPersonId = person.UserID;
     this.selectedPersonName = person.Name;
 
-    this.professorViewService.getCoursesByPerson(this.selectedPersonId).subscribe(data => {
+    if (!this.professorId) return;
+
+    this.professorViewService.getCoursesByPerson(this.selectedPersonId, this.professorId).subscribe(data => {
       this.courses = data;
       this.showAssignmentsModal = true;
     });
@@ -124,9 +137,9 @@ export class ProfessorComponent implements OnInit {
   }
 
   openReportedVsContractedModal(): void {
-    if (!this.selectedWeekId) return;
+    if (!this.selectedWeekId || !this.professorId) return;
 
-    this.professorViewService.getReportedVsContracted(this.selectedWeekId).subscribe(data => {
+    this.professorViewService.getReportedVsContracted(this.selectedWeekId, this.professorId).subscribe(data => {
       this.reportedVsContracted = data;
       this.showReportedVsContractedModal = true;
     });

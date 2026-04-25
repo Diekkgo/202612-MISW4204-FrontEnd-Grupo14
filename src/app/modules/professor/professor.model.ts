@@ -68,12 +68,12 @@ export interface ProfessorTaskView {
 
 export interface ReportedVsContracted {
   userId: string;
-  userName: string;
+  Name: string;
   assignmentId: string;
-  assignmentName: string;
-  contractedHours: number;
-  reportedHours: number;
-  differenceHours: number;
+  CourseName: string;
+  ContractedHours: number;
+  ReportedHours: number;
+  DifferenceHours: number;
   status: 'NO_REPORT' | 'INCOMPLETE' | 'COMPLETE' | 'EXCEEDED';
 }
 

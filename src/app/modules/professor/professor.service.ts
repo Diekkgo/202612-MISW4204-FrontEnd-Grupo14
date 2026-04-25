@@ -11,47 +11,65 @@ import {
   WeeklyDetail,
 } from './professor.model';
 import { Weeks } from '../weeks/weeks.model';
+import { TokenService } from '../../core/services/token.service';
 
 @Injectable({
   providedIn: 'root'
 })
 export class ProfessorService {
-  private apiUrl = environment.urlBase;
-  private professorId = 'a0000000-0000-0000-0000-000000000001';
-  private userId = 'a0000000-0000-0000-0000-000000000002';
-  private token = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyX2lkIjoiZTJmYzU3OWItMjk1YS00NTE0LWFmZDAtYTRhMzZlYTEwY2Q0IiwiZW1haWwiOiJ0ZXN0QHRlc3QuY29tIiwiaXNzIjoidGFza3MtdHJhY2tpbmctYXBpIiwiZXhwIjoxNzc3MTc1ODQ0LCJuYmYiOjE3NzcwODk0NDQsImlhdCI6MTc3NzA4OTQ0NH0.jaYZ5dF9irJ3W13JeSsMmT8v2pYhh-wDs4dBJuvD11U';
-  private headers = new HttpHeaders({
-      Authorization: `Bearer ${this.token}`,
-      'Content-Type': 'application/json'
-  });
+    private apiUrl = environment.urlBase;
+    private token = '';
+    private headers: HttpHeaders | undefined;
 
-  constructor(private http: HttpClient) {}
+    constructor(private http: HttpClient, private tokenService: TokenService) {}
 
-  getStudents(): Observable<Student[]> {
-        return this.http.get<Student[]>(`${this.apiUrl}professors/${this.professorId}/students`, { headers: this.headers });
-  }
+    getStudents(professorId: string): Observable<Student[]> {
+            this.headers = this.createHeaders();
 
-  getCoursesByPerson(userId: string): Observable<Course[]> {
-    return this.http.get<Course[]>(`${this.apiUrl}professors/${this.professorId}/${this.userId}/courses`, { headers: this.headers });
-  }
+            return this.http.get<Student[]>(`${this.apiUrl}professors/${professorId}/students`, { headers: this.headers });
+    }
 
-  getWeeks(): Observable<Weeks[]> {
-      return this.http.get<Weeks[]>(`${this.apiUrl}weeks`, { headers: this.headers });
-  }
+    getCoursesByPerson(userId: string, professorId: string): Observable<Course[]> {
+        this.headers = this.createHeaders();
 
-  getWeeklyDetail(userId: string): Observable<WeeklyDetail> {
-    return this.http.get<WeeklyDetail>(`${this.apiUrl}professors/user/${this.userId}/weeks`, { headers: this.headers });
-  }
+        return this.http.get<Course[]>(`${this.apiUrl}professors/${professorId}/${userId}/courses`, { headers: this.headers });
+    }
 
-  getConsolidated(userId: string): Observable<PersonSummary> {
-      return this.http.get<PersonSummary>(`${this.apiUrl}professors/user/${this.userId}/consolidated-report`, { headers: this.headers });
-  }
+    getWeeks(): Observable<Weeks[]> {
+        this.headers = this.createHeaders();
+        
+        return this.http.get<Weeks[]>(`${this.apiUrl}weeks`, { headers: this.headers });
+    }
 
-  getTasksByProfessor(weekId: string): Observable<ProfessorTaskView[]> {
-      return this.http.get<ProfessorTaskView[]>(`${this.apiUrl}professors/${this.professorId}/weeks/f3b2f06c-9100-4a2a-b152-6e1375d78874/professor-tasks`, { headers: this.headers });
-  }
+    getWeeklyDetail(userId: string): Observable<WeeklyDetail> {
+        this.headers = this.createHeaders();
 
-  getReportedVsContracted(weekId: string): Observable<ReportedVsContracted[]> {
-      return this.http.get<ReportedVsContracted[]>(`${this.apiUrl}professors/weeks/f3b2f06c-9100-4a2a-b152-6e1375d78874/time-comparison`, { headers: this.headers });
-  }
+        return this.http.get<WeeklyDetail>(`${this.apiUrl}professors/user/${userId}/weeks`, { headers: this.headers });
+    }
+
+    getConsolidated(userId: string): Observable<PersonSummary> {
+        this.headers = this.createHeaders();
+
+        return this.http.get<PersonSummary>(`${this.apiUrl}professors/user/${userId}/consolidated-report`, { headers: this.headers });
+    }
+
+    getTasksByProfessor(weekId: string, professorId: string): Observable<ProfessorTaskView[]> {
+        this.headers = this.createHeaders();
+
+        return this.http.get<ProfessorTaskView[]>(`${this.apiUrl}professors/${professorId}/weeks/${weekId}/professor-tasks`, { headers: this.headers });
+    }
+
+    getReportedVsContracted(weekId: string, professorId: string): Observable<ReportedVsContracted[]> {
+        this.headers = this.createHeaders();
+
+        return this.http.get<ReportedVsContracted[]>(`${this.apiUrl}professors/${professorId}/weeks/${weekId}/time-comparison`, { headers: this.headers });
+    }
+
+    createHeaders(): HttpHeaders {
+        this.token = this.tokenService.getToken() || '';
+        return new HttpHeaders({
+            Authorization: `Bearer ${this.token}`,
+            'Content-Type': 'application/json'
+        });
+    }
 }
