@@ -22,7 +22,6 @@ export class ListUserComponent implements OnInit {
   getUsers() {
     this.userService.getUsers().subscribe({
       next: (response) => {
-        console.log(response);
         if (response) {
           this.users = response.users;
           
@@ -56,7 +55,7 @@ export class ListUserComponent implements OnInit {
             }
           }).fire({
             icon: "error",
-            title: `Error al cargar usuarios: ${error}`
+            title: `Error al cargar usuarios: ${error.error.message}`
           });
       }
     })

@@ -14,24 +14,37 @@
                     <th scope="col">Periodo</th>
                     <th scope="col">Fecha de inicio</th>
                     <th scope="col">Fecha final</th>
+                    <th scope="col">Estado</th>
                     <th scope="col">Observaciones</th>
                     <th scope="col">Operaciones</th>
                 </tr>
             </thead>
             <tbody>
+                @for (course of courses; track $index) {
                 <tr>
-                    <td>Mark</td>
-                    <td>correo&#64;correo.com</td>
-                    <td>Mark</td>
-                    <td>Mark</td>
-                    <td>Mark</td>
-                    <td>Mark</td>
+                    <td>{{ course.name }}</td>
+                    <td>{{ course.type }}</td>
+                    <td>{{ getPeriodName(course.period_id) }}</td>
+                    <td>{{ course.start_date }}</td>
+                    <td>{{ course.end_date }}</td>
+                    <td>{{ course.status }}</td>
+                    <td>{{ course.observations }}</td>
+                    @if (course.status === 'ACTIVE') {
                     <td>
-                        <a class="btn btn-warning"><i class="material-icons">
+                        <a class="btn btn-warning"><i class="material-icons" (click)="closeCourse(course.id || '')">
                                 event_busy
                             </i></a>
                     </td>
+                    }
+                    @if (course.status !== 'ACTIVE') {
+                    <td>
+                        <a class="btn btn-primary"><i class="material-icons" [routerLink]="['/courses/details', course.id]">
+                                visibility
+                            </i></a>
+                    </td>
+                    }
                 </tr>
+                }
             </tbody>
         </table>
     </section>

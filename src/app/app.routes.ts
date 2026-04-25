@@ -6,6 +6,7 @@ import { AssociateRoleComponent } from './modules/user/pages/associate-role/asso
 import { HomeComponent } from './modules/home/pages/home/home.component';
 import { ListCourseComponent } from './modules/course/pages/list-course/list-course.component';
 import { CreateCourseComponent } from './modules/course/pages/create-course/create-course.component';
+import { CourseDetailsComponent } from './modules/course/pages/course-details/course-details.component';
 
 export const routes: Routes = [
     {
@@ -35,6 +36,10 @@ export const routes: Routes = [
     {
         path: 'courses/create',
         component: CreateCourseComponent
+    },
+    {
+        path: 'courses/details/:id',
+        component: CourseDetailsComponent
     },
     {
         path: '**',

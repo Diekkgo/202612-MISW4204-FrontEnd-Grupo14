@@ -1,0 +1,37 @@
+<div class="container">
+    <div class="d-flex justify-content-start mt-4">
+        <a class="text-dark" type="submit" [routerLink]="['/courses']"><i class="material-icons">arrow_back</i></a>
+    </div>
+    @if (course.status === 'CLOSED'){
+    <h3 class="text-center mt-5">Detalles del curso: {{ course.name }}</h3>
+
+    <div class="row mt-5">
+        <div class="col-md-6">
+            <p><strong>Nombre: </strong> {{ course.name }}</p>
+        </div>
+        <div class="col-md-6">
+            <p><strong>Tipo de curso: </strong> {{ course.type }}</p>
+        </div>
+        <div class="col-md-6">
+            <p><strong>Periodo Académico: </strong> {{ getPeriodName(course.period_id) }}</p>
+        </div>
+        <div class="col-md-6">
+            <p><strong>Fecha de inicio: </strong> {{ course.start_date | date: 'yyyy/MM/dd' }}</p>
+        </div>
+        <div class="col-md-6">
+            <p><strong>Fecha de finalización: </strong> {{ course.end_date | date: 'yyyy/MM/dd' }}</p>
+        </div>
+        <div class="col-md-6">
+            <p><strong>Estado: </strong> {{ course.status }}</p>
+        </div>
+        <div class="col-md-6">
+            <p><strong>Observaciones: </strong> {{ course.observations }}</p>
+        </div>
+    </div>
+    } @else {
+    <h1 class="text-center">No se puede ser los detalles de este curso</h1>
+    }
+    <div class="d-flex justify-content-end">
+        <button class="btn btn-secondary" [routerLink]="['/courses']">Volver</button>
+    </div>
+</div>

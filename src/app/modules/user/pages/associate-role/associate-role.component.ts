@@ -91,7 +91,7 @@ export class AssociateRoleComponent implements OnInit {
           }
         }).fire({
           icon: "error",
-          title: `Error al cargar el usuario: ${error}`
+          title: `Error al cargar el usuario: ${error.error.message}`
         });
       }
     })
@@ -147,7 +147,7 @@ export class AssociateRoleComponent implements OnInit {
           }
         }).fire({
           icon: "error",
-          title: `Error al actualizar roles: ${error}`
+          title: `Error al actualizar roles: ${error.error.message}`
         });
       }
     })

@@ -37,8 +37,9 @@
             <select class="form-select" aria-label="Default select example" id="period" formControlName="period"
                 [class.is-invalid]="isInvalid('period')" [class.is-valid]="isValid('period')">
                 <option selected value="">Seleccione una opción...</option>
-                <option value="COURSE">Curso</option>
-                <option value="PROJECT">Proyecto</option>
+                @for (period of academicPeriods; track $index) {
+                <option [value]="period.id">{{ period.name }}</option>
+                }
             </select>
             <div class="invalid-feedback" *ngIf="period?.errors?.['required']">
                 El periodo es obligatorio.
@@ -48,8 +49,7 @@
         <div class="col-md-6">
             <label for="startDate" class="form-label">Fecha de inicio: </label>
             <input type="datetime-local" class="form-control" id="startDate" formControlName="startDate"
-                [class.is-invalid]="isInvalid('startDate')"
-                [class.is-valid]="isValid('startDate')">
+                [class.is-invalid]="isInvalid('startDate')" [class.is-valid]="isValid('startDate')">
 
             <div class="invalid-feedback" *ngIf="startDate?.errors?.['required']">
                 La fecha de inicio obligatoria.
@@ -59,8 +59,7 @@
         <div class="col-md-6">
             <label for="endDate" class="form-label">Fecha de finalización: </label>
             <input type="datetime-local" class="form-control" id="endDate" formControlName="endDate"
-                [class.is-invalid]="isInvalid('endDate')"
-                [class.is-valid]="isValid('endDate')">
+                [class.is-invalid]="isInvalid('endDate')" [class.is-valid]="isValid('endDate')">
 
             <div class="invalid-feedback" *ngIf="endDate?.errors?.['required']">
                 La fecha de finalización obligatoria.
@@ -69,7 +68,8 @@
 
         <div class="col-12">
             <label for="observations" class="form-label">Observaciones: </label>
-            <textarea class="form-control" id="observations" formControlName="observations" placeholder="Observaciones..."></textarea>
+            <textarea class="form-control" id="observations" formControlName="observations"
+                placeholder="Observaciones..."></textarea>
         </div>
 
         <div class="col-12 d-flex justify-content-end gap-2 mt-4">

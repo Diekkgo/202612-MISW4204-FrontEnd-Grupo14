@@ -1,7 +1,11 @@
 import { CommonModule } from '@angular/common';
-import { Component } from '@angular/core';
+import { Component, inject, OnInit } from '@angular/core';
 import { AbstractControl, FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
-import { RouterModule } from '@angular/router';
+import { Router, RouterModule } from '@angular/router';
+import { CourseService } from '../../services/course.service';
+import { AcademicPeriod } from '../../models/http/courses.interface';
+import Swal from 'sweetalert2';
+import { Course } from '../../models/course.model';
 
 @Component({
   selector: 'app-create-course',
@@ -9,9 +13,14 @@ import { RouterModule } from '@angular/router';
   templateUrl: './create-course.component.html',
   styleUrl: './create-course.component.css'
 })
-export class CreateCourseComponent {
+export class CreateCourseComponent implements OnInit {
   courseForm: FormGroup;
   submitted = false;
+
+  academicPeriods: AcademicPeriod[] = [];
+
+  private readonly courseService = inject(CourseService);
+  private readonly router = inject(Router);
 
   constructor(private readonly fb: FormBuilder) {
     this.courseForm = this.fb.group(
@@ -24,6 +33,106 @@ export class CreateCourseComponent {
         observations: ['']
       }
     );
+  }
+
+  ngOnInit(): void {
+    this.getAcademicPeriods();
+  }
+
+  getAcademicPeriods() {
+    this.courseService.getAcademicPeriods().subscribe({
+      next: (response) => {
+        if (response) {
+          this.academicPeriods = response
+        } else {
+          Swal.mixin({
+            toast: true,
+            position: "top-end",
+            showConfirmButton: false,
+            timer: 3000,
+            timerProgressBar: true,
+            didOpen: (toast) => {
+              toast.onmouseenter = Swal.stopTimer;
+              toast.onmouseleave = Swal.resumeTimer;
+            }
+          }).fire({
+            icon: "error",
+            title: `Error al cargar los periodos académicos`
+          });
+        }
+      },
+      error: (error) => {
+        Swal.mixin({
+          toast: true,
+          position: "top-end",
+          showConfirmButton: false,
+          timer: 3000,
+          timerProgressBar: true,
+          didOpen: (toast) => {
+            toast.onmouseenter = Swal.stopTimer;
+            toast.onmouseleave = Swal.resumeTimer;
+          }
+        }).fire({
+          icon: "error",
+          title: `Error al cargar los periodos académicos ${error.error.message}`
+        });
+      }
+    })
+  }
+
+  createCourse(course: Course) {
+    this.courseService.createCourse(course).subscribe({
+      next: (response) => {
+        if (response) {
+          Swal.mixin({
+            toast: true,
+            position: "top-end",
+            showConfirmButton: false,
+            timer: 3000,
+            timerProgressBar: true,
+            didOpen: (toast) => {
+              toast.onmouseenter = Swal.stopTimer;
+              toast.onmouseleave = Swal.resumeTimer;
+            }
+          }).fire({
+            icon: "success",
+            title: `Curso creado exitosamente`
+          });
+          this.router.navigate(['/courses']);
+        } else {
+          Swal.mixin({
+            toast: true,
+            position: "top-end",
+            showConfirmButton: false,
+            timer: 3000,
+            timerProgressBar: true,
+            didOpen: (toast) => {
+              toast.onmouseenter = Swal.stopTimer;
+              toast.onmouseleave = Swal.resumeTimer;
+            }
+          }).fire({
+            icon: "error",
+            title: `Error al crear curso`
+          });
+        }
+      },
+      error(error) {
+        Swal.mixin({
+          toast: true,
+          position: "top-end",
+          showConfirmButton: false,
+          timer: 3000,
+          timerProgressBar: true,
+          didOpen: (toast) => {
+            toast.onmouseenter = Swal.stopTimer;
+            toast.onmouseleave = Swal.resumeTimer;
+          }
+        }).fire({
+          icon: "error",
+          title: `Error al crear curso ${error.error.message}`
+        });
+      }
+    })
   }
 
   get name(): AbstractControl | null {
@@ -62,7 +171,7 @@ export class CreateCourseComponent {
     const month = String(newDate.getMonth() + 1).padStart(2, '0');
     const day = String(newDate.getDate()).padStart(2, '0');
 
-    return `${year}/${month}/${day}`;
+    return `${year}-${month}-${day}`;
   }
 
   onSubmit(): void {
@@ -73,18 +182,16 @@ export class CreateCourseComponent {
       return;
     }
 
-    const formValue = {
+    const formValue: Course = {
       name: this.courseForm.value.name,
       type: this.courseForm.value.type,
-      period: this.courseForm.value.period,
-      startDate: this.formatedDate(this.courseForm.value.startDate),
-      endDate: this.formatedDate(this.courseForm.value.endDate),
+      period_id: this.courseForm.value.period,
+      start_date: this.formatedDate(this.courseForm.value.startDate),
+      end_date: this.formatedDate(this.courseForm.value.endDate),
       observations: this.courseForm.value.observations
     };
 
-    console.log('Curso creado:', formValue);
-
-    // Llamar tu servicio
+    this.createCourse(formValue);
 
   }
 }
