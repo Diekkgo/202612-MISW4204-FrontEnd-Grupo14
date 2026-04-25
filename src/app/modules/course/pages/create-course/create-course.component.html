@@ -1,0 +1,84 @@
+<div class="container py-4">
+    <div class="d-flex">
+        <a class="mt-2 text-dark" type="submit" [routerLink]="['/courses']"><i class="material-icons">arrow_back</i></a>
+    </div>
+    <form [formGroup]="courseForm" (ngSubmit)="onSubmit()" class="row g-3">
+        <h1 class="text-center my-4">Crear Cursos</h1>
+
+        <div class="col-md-6">
+            <label for="name" class="form-label">Nombre: </label>
+            <input id="name" type="text" class="form-control" formControlName="name"
+                [class.is-invalid]="isInvalid('name')" [class.is-valid]="isValid('name')"
+                placeholder="Ej: Desarrollo de software en la nube" />
+
+            <div class="invalid-feedback" *ngIf="name?.errors?.['required']">
+                El nombre es obligatorio.
+            </div>
+            <div class="invalid-feedback" *ngIf="name?.errors?.['minlength']">
+                El nombre debe tener al menos 3 caracteres.
+            </div>
+        </div>
+
+        <div class="col-md-6">
+            <label for="type" class="form-label">Tipo de curso: </label>
+            <select class="form-select" aria-label="Default select example" id="type" formControlName="type"
+                [class.is-invalid]="isInvalid('type')" [class.is-valid]="isValid('type')">
+                <option selected value="">Seleccione una opción...</option>
+                <option value="COURSE">Curso</option>
+                <option value="PROJECT">Proyecto</option>
+            </select>
+            <div class="invalid-feedback" *ngIf="type?.errors?.['required']">
+                El tipo de curso es obligatorio.
+            </div>
+        </div>
+
+        <div class="col-md-12">
+            <label for="period" class="form-label">Periodo: </label>
+            <select class="form-select" aria-label="Default select example" id="period" formControlName="period"
+                [class.is-invalid]="isInvalid('period')" [class.is-valid]="isValid('period')">
+                <option selected value="">Seleccione una opción...</option>
+                @for (period of academicPeriods; track $index) {
+                <option [value]="period.id">{{ period.name }}</option>
+                }
+            </select>
+            <div class="invalid-feedback" *ngIf="period?.errors?.['required']">
+                El periodo es obligatorio.
+            </div>
+        </div>
+
+        <div class="col-md-6">
+            <label for="startDate" class="form-label">Fecha de inicio: </label>
+            <input type="datetime-local" class="form-control" id="startDate" formControlName="startDate"
+                [class.is-invalid]="isInvalid('startDate')" [class.is-valid]="isValid('startDate')">
+
+            <div class="invalid-feedback" *ngIf="startDate?.errors?.['required']">
+                La fecha de inicio obligatoria.
+            </div>
+        </div>
+
+        <div class="col-md-6">
+            <label for="endDate" class="form-label">Fecha de finalización: </label>
+            <input type="datetime-local" class="form-control" id="endDate" formControlName="endDate"
+                [class.is-invalid]="isInvalid('endDate')" [class.is-valid]="isValid('endDate')">
+
+            <div class="invalid-feedback" *ngIf="endDate?.errors?.['required']">
+                La fecha de finalización obligatoria.
+            </div>
+        </div>
+
+        <div class="col-12">
+            <label for="observations" class="form-label">Observaciones: </label>
+            <textarea class="form-control" id="observations" formControlName="observations"
+                placeholder="Observaciones..."></textarea>
+        </div>
+
+        <div class="col-12 d-flex justify-content-end gap-2 mt-4">
+            <button class="btn btn-primary" type="submit">
+                Guardar usuario
+            </button>
+            <button class="btn btn-secondary" type="button" [routerLink]="['/users']">
+                Cancelar
+            </button>
+        </div>
+    </form>
+</div>

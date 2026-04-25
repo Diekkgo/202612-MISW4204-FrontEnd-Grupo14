@@ -1,1 +1,50 @@
-<p>login works!</p>
+<div class="login-page">
+  <div class="card shadow-sm login-card">
+    <div class="card-body p-4 p-md-5">
+      <h1 class="h3 mb-2 text-center">Iniciar sesión</h1>
+      <p class="text-body-secondary text-center mb-4">
+        Ingresa con tu correo y contraseña.
+      </p>
+
+      <div *ngIf="errorMessage" class="alert alert-danger" role="alert">
+        {{ errorMessage }}
+      </div>
+
+      <form [formGroup]="form" (ngSubmit)="submit()" novalidate>
+        <div class="mb-3">
+          <label for="email" class="form-label">Correo</label>
+          <input
+            id="email"
+            type="email"
+            class="form-control"
+            formControlName="email"
+            placeholder="profesor1@test.com"
+          />
+          <div class="text-danger small mt-1" *ngIf="emailControl.touched && emailControl.invalid">
+            <span *ngIf="emailControl.errors?.['required']">El correo es obligatorio.</span>
+            <span *ngIf="emailControl.errors?.['email']">Ingresa un correo válido.</span>
+          </div>
+        </div>
+
+        <div class="mb-4">
+          <label for="password" class="form-label">Contraseña</label>
+          <input
+            id="password"
+            type="password"
+            class="form-control"
+            formControlName="password"
+            placeholder="********"
+          />
+          <div class="text-danger small mt-1" *ngIf="passwordControl.touched && passwordControl.invalid">
+            <span *ngIf="passwordControl.errors?.['required']">La contraseña es obligatoria.</span>
+            <span *ngIf="passwordControl.errors?.['minlength']">La contraseña debe tener al menos 4 caracteres.</span>
+          </div>
+        </div>
+
+        <button class="btn btn-primary w-100" type="submit" [disabled]="loading">
+          {{ loading ? 'Ingresando...' : 'Ingresar' }}
+        </button>
+      </form>
+    </div>
+  </div>
+</div>

@@ -1,0 +1,74 @@
+<section class="page">
+  <div class="page-header">
+    <div>
+      <h1>Listado de asignaciones</h1>
+      <p>Consulta las asignaciones registradas y filtra por usuario o curso.</p>
+    </div>
+
+    <button type="button" class="primary" (click)="goToCreate()">
+      Nueva asignación
+    </button>
+  </div>
+
+  <form class="card filters" [formGroup]="filtersForm" (ngSubmit)="loadAssignments()">
+    <div class="field">
+      <label for="userId">Usuario</label>
+      <select id="userId" formControlName="userId">
+        <option value="">Todos</option>
+        @for (user of users; track user.id) {
+          <option [value]="user.id">{{ user.label }}</option>
+        }
+      </select>
+    </div>
+
+    <div class="field">
+      <label for="courseId">Curso</label>
+      <select id="courseId" formControlName="courseId">
+        <option value="">Todos</option>
+        @for (course of courses; track course.id) {
+          <option [value]="course.id">{{ course.label }}</option>
+        }
+      </select>
+    </div>
+
+    <div class="actions">
+      <button type="submit">Buscar</button>
+      <button type="button" class="secondary" (click)="clearFilters()">Limpiar</button>
+    </div>
+  </form>
+
+  @if (errorMessage) {
+    <div class="alert error">{{ errorMessage }}</div>
+  }
+
+  <div class="card table-card">
+    @if (loading) {
+      <p>Cargando asignaciones...</p>
+    } @else if (assignments.length === 0) {
+      <p>No hay asignaciones para mostrar.</p>
+    } @else {
+      <table>
+        <thead>
+          <tr>
+            <th>ID</th>
+            <th>Usuario</th>
+            <th>Curso</th>
+            <th>Rol</th>
+            <th>Horas</th>
+          </tr>
+        </thead>
+        <tbody>
+          @for (assignment of assignments; track assignment.id) {
+            <tr>
+              <td>{{ assignment.id }}</td>
+              <td>{{ getUserLabel(assignment.userId) }}</td>
+              <td>{{ getCourseLabel(assignment.courseId) }}</td>
+              <td>{{ assignment.roleType }}</td>
+              <td>{{ assignment.contractedHours }}</td>
+            </tr>
+          }
+        </tbody>
+      </table>
+    }
+  </div>
+</section>

@@ -1,0 +1,71 @@
+<section class="page">
+  <div class="page-header">
+    <h1>Crear asignación</h1>
+    <p>Registra una nueva asignación de monitor o assistant.</p>
+  </div>
+
+  <form class="card form" [formGroup]="form" (ngSubmit)="submit()">
+    @if (successMessage) {
+      <div class="alert success">{{ successMessage }}</div>
+    }
+
+    @if (errorMessage) {
+      <div class="alert error">{{ errorMessage }}</div>
+    }
+
+    <div class="field">
+      <label for="userId">Usuario</label>
+      <select id="userId" formControlName="userId">
+        <option value="">Selecciona un usuario</option>
+        @for (user of users; track user.id) {
+          <option [value]="user.id">{{ user.label }}</option>
+        }
+      </select>
+      @if (hasError('userId')) {
+        <small class="error-text">El usuario es obligatorio.</small>
+      }
+    </div>
+
+    <div class="field">
+      <label for="courseId">Curso</label>
+      <select id="courseId" formControlName="courseId">
+        <option value="">Selecciona un curso</option>
+        @for (course of courses; track course.id) {
+          <option [value]="course.id">{{ course.label }}</option>
+        }
+      </select>
+      @if (hasError('courseId')) {
+        <small class="error-text">El curso es obligatorio.</small>
+      }
+    </div>
+
+    <div class="field">
+      <label for="roleType">Rol</label>
+      <select id="roleType" formControlName="roleType">
+        @for (role of roleOptions; track role) {
+          <option [value]="role">{{ role }}</option>
+        }
+      </select>
+    </div>
+
+    <div class="field">
+      <label for="contractedHours">Horas contratadas</label>
+      <input
+        id="contractedHours"
+        type="number"
+        min="1"
+        formControlName="contractedHours"
+        placeholder="Ingresa las horas"
+      />
+      @if (hasError('contractedHours')) {
+        <small class="error-text">Las horas deben ser mayores a 0.</small>
+      }
+    </div>
+
+    <div class="actions">
+      <button type="submit" [disabled]="loading || loadingCatalogs">
+        {{ loading ? 'Guardando...' : 'Crear asignación' }}
+      </button>
+    </div>
+  </form>
+</section>
