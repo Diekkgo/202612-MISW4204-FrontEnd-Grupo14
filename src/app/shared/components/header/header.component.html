@@ -1,37 +1,22 @@
-@if (isLoggedIn) {
-  <nav class="navbar navbar-light bg-secondary">
-    <div class="container-fluid">
+<nav class="navbar navbar-light bg-secondary">
+  <div class="container-fluid">
+    <div style="display: flex; flex-direction: row; align-items: center;">
       <span class="navbar-brand">GestorApp</span>
-
-      <div class="d-flex align-items-center gap-3">
-        <a class="nav-link" routerLink="/home" routerLinkActive="active">Inicio</a>
-
-        @if (canManageUsers) {
-          <a class="nav-link" routerLink="/users" routerLinkActive="active">Usuarios</a>
-        }
-
-        @if (canSeeAssignments) {
-          <a class="nav-link" routerLink="/assignments" routerLinkActive="active">
-            Asignaciones
-          </a>
-        }
-
-        @if (canSeeTasks) {
-          <a class="nav-link" routerLink="/tasks" routerLinkActive="active">
-            Tareas
-          </a>
-        }
-
-        @if (canSeeReports) {
-          <a class="nav-link" routerLink="/reports" routerLinkActive="active">
-            Reportes
-          </a>
-        }
-
-        <button class="btn btn-secondary" type="button" (click)="logout()">
-          Cerrar sesión
-        </button>
-      </div>
+      <app-notification></app-notification>
     </div>
-  </nav>
-}
+
+    <div class="d-flex align-items-center gap-3">
+      <a class="nav-link" routerLink="/home" routerLinkActive="active">Inicio</a>
+      <a class="nav-link" routerLink="/users" routerLinkActive="active">Usuarios</a>
+      <a class="nav-link" routerLink="/assignments" routerLinkActive="active">Asignaciones</a>
+      <a class="nav-link" routerLink="/tasks" routerLinkActive="active">Tareas</a>
+      <a class="nav-link" routerLink="/reports" routerLinkActive="active">Reportes</a>
+      <a *ngIf="isAdmin || isProfessor" class="nav-link" routerLink="/professor" routerLinkActive="active">Profesor</a>
+      <a *ngIf="isAdmin || !isProfessor" class="nav-link" routerLink="/student-monitor" routerLinkActive="active">Estudiante/Monitor</a>
+      <app-list-weeks-modal *ngIf="isAdmin || isProfessor"></app-list-weeks-modal>
+      <button class="btn btn-secondary" type="button" (click)="logout()">
+        <i class="material-icons" style="vertical-align: middle; font-size: 1.2rem;">exit_to_app</i> Cerrar sesión
+      </button>
+    </div>
+  </div>
+</nav>

@@ -2,20 +2,25 @@ import { inject, Injectable } from '@angular/core';
 import { Router } from '@angular/router';
 
 import { LoginResponse } from '../../modules/auth/models/auth.model';
+import { BehaviorSubject } from 'rxjs';
 
 @Injectable({
-  providedIn: 'root',
+  providedIn: 'root'
 })
 export class TokenService {
   private readonly TOKEN_KEY = 'auth_token';
   private readonly USER_KEY = 'auth_user';
   private readonly ROLES_KEY = 'auth_roles';
   private readonly router = inject(Router);
+  private rolesSubject = new BehaviorSubject<string[]>(this.getRoles());
+  roles$ = this.rolesSubject.asObservable();
 
-  setSession(data: LoginResponse): void {
-    localStorage.setItem(this.TOKEN_KEY, data.token);
-    localStorage.setItem(this.USER_KEY, JSON.stringify(data.user));
-    localStorage.setItem(this.ROLES_KEY, JSON.stringify(data.roles));
+  setSession(auth: LoginResponse): void {
+    localStorage.setItem(this.TOKEN_KEY, auth.token);
+    localStorage.setItem(this.USER_KEY, JSON.stringify(auth.user));
+    localStorage.setItem(this.ROLES_KEY, JSON.stringify(auth.roles));
+
+    this.rolesSubject.next(this.getRoles());
   }
 
   getToken(): string | null {
@@ -44,20 +49,9 @@ export class TokenService {
     }
 
     try {
-      const roles = JSON.parse(rawRoles);
-
-      if (!Array.isArray(roles)) {
-        return [];
-      }
-
+      const roles = JSON.parse(rawRoles) as Array<{ name?: string }>;
       return roles
-        .map((role) => {
-          if (typeof role === 'string') {
-            return role.toUpperCase().trim();
-          }
-
-          return role?.name?.toUpperCase().trim();
-        })
+        .map((role) => role.name?.toUpperCase()?.trim())
         .filter((role): role is string => !!role);
     } catch {
       return [];
@@ -88,25 +82,5 @@ export class TokenService {
   logoutAndRedirectToLogin(): void {
     this.clearSession();
     this.router.navigate(['/auth']);
-  }
-
-  hasRole(...allowedRoles: string[]): boolean {
-    const currentRoles = this.getRoles();
-
-    return allowedRoles
-      .map((role) => role.toUpperCase().trim())
-      .some((role) => currentRoles.includes(role));
-  }
-
-  isAdmin(): boolean {
-    return this.hasRole('ADMIN');
-  }
-
-  isProfessor(): boolean {
-    return this.hasRole('PROFESOR');
-  }
-
-  isStudent(): boolean {
-    return this.hasRole('ESTUDIANTE');
   }
 }

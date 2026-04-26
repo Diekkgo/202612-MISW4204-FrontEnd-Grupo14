@@ -1,34 +1,29 @@
-import { Component, inject } from '@angular/core';
+import { Component, inject, OnInit } from '@angular/core';
 import { RouterModule } from '@angular/router';
 import { TokenService } from '../../../core/services/token.service';
+import { NotificationComponent } from '../../../modules/notification/pages/notification.component';
+import { ListWeeksComponent } from '../../../modules/weeks/pages/list-weeks/list-weeks.component';
+import { CommonModule } from '@angular/common';
 
 @Component({
   selector: 'app-header',
-  imports: [RouterModule],
+  imports: [RouterModule, CommonModule, NotificationComponent, ListWeeksComponent],
   templateUrl: './header.component.html',
   styleUrl: './header.component.css'
 })
-export class HeaderComponent {
-  protected readonly tokenService = inject(TokenService);
+export class HeaderComponent implements OnInit {
+  userRole: string[] = [];
 
-  protected get isLoggedIn(): boolean {
-    return this.tokenService.hasToken();
-  }
+  isAdmin = false;
+  isProfessor = false;
+  private readonly tokenService = inject(TokenService);
 
-  protected get canSeeAssignments(): boolean {
-    return this.tokenService.hasRole('PROFESOR', 'ADMIN');
-  }
-
-  protected get canSeeTasks(): boolean {
-    return this.tokenService.hasRole('ESTUDIANTE', 'PROFESOR', 'ADMIN');
-  }
-
-  protected get canManageUsers(): boolean {
-    return this.tokenService.hasRole('ADMIN');
-  }
-
-  protected get canSeeReports(): boolean {
-    return this.tokenService.hasRole('PROFESOR', 'ADMIN');
+  ngOnInit(): void {
+    this.tokenService.roles$.subscribe((roles) => {
+      this.userRole = roles;
+      this.isAdmin = roles.includes('ADMIN');
+      this.isProfessor = roles.includes('PROFESOR');
+    });
   }
 
   protected logout(): void {
