@@ -15,6 +15,8 @@ import { CreateCourseComponent } from './modules/course/pages/create-course/crea
 import { CourseDetailsComponent } from './modules/course/pages/course-details/course-details.component';
 import { AssociateRoleComponent } from './modules/user/pages/associate-role/associate-role.component';
 import { CreateUserComponent } from './modules/user/pages/create-user/create-user.component';
+import { ProfessorComponent } from './modules/professor/pages/professor.component';
+import { OperationalComponent } from './modules/operational/pages/operational.component';
 
 export const routes: Routes = [
     {
@@ -85,6 +87,14 @@ export const routes: Routes = [
     {
         path: 'courses/details/:id',
         component: CourseDetailsComponent
+    },
+    {
+        path: 'professor',
+        component: ProfessorComponent
+    },
+    {
+        path: 'student-monitor',
+        component: OperationalComponent
     },
     {
         path: '**',

@@ -1,0 +1,58 @@
+<button class="btn-abrir" (click)="openModal()">
+    Ver semanas disponibles
+</button>
+
+<div class="modal-backdrop" *ngIf="showModal">
+    <div class="modal-container">
+        <div class="modal-header">
+            <h2>Semanas disponibles</h2>
+            <button class="btn-cerrar" (click)="closeModal()">×</button>
+        </div>
+
+        <div class="modal-body">
+            <button class="btn-crear-semana" (click)="openModalCreateWeek()">
+                Crear semana
+            </button>
+            <table class="tabla-semanas" *ngIf="weeks.length > 0; else sinSemanas">
+                <thead>
+                    <tr>
+                        <th>Fecha inicio</th>
+                        <th>Fecha fin</th>
+                        <th>Semana Activa</th>
+                        <th>Semana Cerrada</th>
+                        <th>Acciones</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr *ngFor="let week of weeks">
+                        <td>{{ week.StartDate | date:'dd/MM/yyyy':'UTC' }}</td>
+                        <td>{{ week.EndDate | date:'dd/MM/yyyy':'UTC' }}</td>
+                        <td>{{ week.IsActive ? 'Si' : 'No'}}</td>
+                        <td>{{ week.IsClosed ? 'Si' : 'No'}}</td>
+                        <td class="acciones">
+                            <button class="btn-editar" (click)="openModalEditWeek(week.ID)">
+                                Editar
+                            </button>
+                            <button class="btn-eliminar" (click)="deleteWeek(week.ID)">
+                                Eliminar
+                            </button>
+                            <button class="btn-activar" (click)="activateWeek(week.ID)">
+                                Activar
+                            </button>
+                            <button class="btn-cerrar-semana" (click)="closeWeek(week.ID)">
+                                Cerrar
+                            </button>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+
+            <ng-template #sinSemanas>
+                <p class="sin-datos">No hay semanas registradas.</p>
+            </ng-template>
+        </div>
+    </div>
+</div>
+
+<app-create-edit-week-modal [showWeekModal]="showWeekModal" [periods]="periods" [selectedWeek]="selectedWeek" (close)="closeWeekForm()" (save)="saveWeek($event)">
+</app-create-edit-week-modal>
