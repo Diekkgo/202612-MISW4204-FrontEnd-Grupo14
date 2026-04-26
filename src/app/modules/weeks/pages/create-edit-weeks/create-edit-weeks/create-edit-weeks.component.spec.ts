@@ -1,17 +1,23 @@
 /* tslint:disable:no-unused-variable */
-import { async, ComponentFixture, TestBed } from '@angular/core/testing';
+import { ComponentFixture, TestBed, waitForAsync } from '@angular/core/testing';
 import { By } from '@angular/platform-browser';
 import { DebugElement } from '@angular/core';
 
 import { CreateEditWeeksComponent } from './create-edit-weeks.component';
+import { provideHttpClient } from '@angular/common/http';
+import { provideRouter } from '@angular/router';
 
 describe('CreateEditWeeksComponent', () => {
   let component: CreateEditWeeksComponent;
   let fixture: ComponentFixture<CreateEditWeeksComponent>;
 
-  beforeEach(async(() => {
+  beforeEach(waitForAsync(() => {
     TestBed.configureTestingModule({
-      declarations: [ CreateEditWeeksComponent ]
+      imports: [ CreateEditWeeksComponent ],
+      providers: [
+      provideHttpClient(),
+      provideRouter([])
+    ]
     })
     .compileComponents();
   }));

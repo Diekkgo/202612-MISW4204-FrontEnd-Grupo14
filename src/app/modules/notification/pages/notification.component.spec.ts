@@ -1,17 +1,23 @@
 /* tslint:disable:no-unused-variable */
-import { async, ComponentFixture, TestBed } from '@angular/core/testing';
+import { ComponentFixture, TestBed, waitForAsync } from '@angular/core/testing';
 import { By } from '@angular/platform-browser';
 import { DebugElement } from '@angular/core';
+import { provideHttpClient } from '@angular/common/http';
 
 import { NotificationComponent } from './notification.component';
+import { provideRouter } from '@angular/router';
 
 describe('NotificationComponent', () => {
   let component: NotificationComponent;
   let fixture: ComponentFixture<NotificationComponent>;
 
-  beforeEach(async(() => {
+  beforeEach(waitForAsync(() => {
     TestBed.configureTestingModule({
-      declarations: [ NotificationComponent ]
+      imports: [ NotificationComponent ],
+      providers: [
+      provideHttpClient(),
+      provideRouter([])
+    ]
     })
     .compileComponents();
   }));
