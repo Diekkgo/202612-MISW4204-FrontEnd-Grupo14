@@ -2,11 +2,22 @@ import { inject } from '@angular/core';
 import { CanActivateFn, Router } from '@angular/router';
 import { TokenService } from '../services/token.service';
 
-export const guestGuard: CanActivateFn = () => {
+export const roleGuard: CanActivateFn = (route) => {
   const tokenService = inject(TokenService);
   const router = inject(Router);
 
   if (!tokenService.hasToken()) {
+    tokenService.clearSession();
+    return router.createUrlTree(['/auth']);
+  }
+
+  const allowedRoles = route.data?.['roles'] as string[] | undefined;
+
+  if (!allowedRoles || allowedRoles.length === 0) {
+    return true;
+  }
+
+  if (tokenService.hasRole(...allowedRoles)) {
     return true;
   }
 
@@ -19,5 +30,5 @@ export const guestGuard: CanActivateFn = () => {
   }
 
   tokenService.clearSession();
-  return true;
+  return router.createUrlTree(['/auth']);
 };

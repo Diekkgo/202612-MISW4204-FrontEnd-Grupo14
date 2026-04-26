@@ -10,15 +10,16 @@ import { AssignmentsService } from '../../../assignments/services/assignments.se
 import { AssignmentResponse } from '../../../assignments/models/assignment.model';
 import {
   CatalogOption,
-  CatalogsService
+  CatalogsService,
 } from '../../../../core/services/catalogs.service';
+import { TokenService } from '../../../../core/services/token.service';
 
 @Component({
   selector: 'app-list-tasks',
   standalone: true,
   imports: [CommonModule, ReactiveFormsModule, RouterModule],
   templateUrl: './list-tasks.component.html',
-  styleUrl: './list-tasks.component.css'
+  styleUrl: './list-tasks.component.css',
 })
 export class ListTasksComponent implements OnInit {
   private readonly service = inject(TasksService);
@@ -27,11 +28,16 @@ export class ListTasksComponent implements OnInit {
   private readonly router = inject(Router);
   private readonly fb = inject(FormBuilder);
 
-  protected readonly statusOptions: TaskStatus[] = ['OPEN', 'IN_PROGRESS', 'DONE'];
+  protected readonly statusOptions: TaskStatus[] = [
+    'OPEN',
+    'IN_PROGRESS',
+    'DONE',
+  ];
+  protected readonly tokenService = inject(TokenService);
 
   protected readonly filtersForm = this.fb.nonNullable.group({
     assignmentId: [''],
-    weekId: ['']
+    weekId: [''],
   });
 
   protected tasks: TaskResponse[] = [];
@@ -51,12 +57,12 @@ export class ListTasksComponent implements OnInit {
   protected loadCatalogs(): void {
     forkJoin({
       assignments: this.assignmentsService.getAssignments(),
-      weeks: this.catalogsService.getWeeks()
+      weeks: this.catalogsService.getWeeks(),
     }).subscribe({
       next: ({ assignments, weeks }) => {
         this.assignments = assignments;
         this.weeks = weeks;
-      }
+      },
     });
   }
 
@@ -77,14 +83,14 @@ export class ListTasksComponent implements OnInit {
           error?.error?.error ||
           'No fue posible cargar las tareas.';
         this.loading = false;
-      }
+      },
     });
   }
 
   protected clearFilters(): void {
     this.filtersForm.reset({
       assignmentId: '',
-      weekId: ''
+      weekId: '',
     });
     this.loadTasks();
   }
@@ -98,6 +104,11 @@ export class ListTasksComponent implements OnInit {
   }
 
   protected updateStatus(task: TaskResponse, status: TaskStatus): void {
+    if (!this.canModifyTask(task)) {
+      this.errorMessage = 'No tienes permisos para modificar esta tarea.';
+      return;
+    }
+
     this.successMessage = '';
     this.errorMessage = '';
 
@@ -111,12 +122,14 @@ export class ListTasksComponent implements OnInit {
           error?.error?.message ||
           error?.error?.error ||
           'No fue posible actualizar el estado.';
-      }
+      },
     });
   }
 
   protected getAssignmentLabel(assignmentId: string): string {
-    const assignment = this.assignments.find((item) => item.id === assignmentId);
+    const assignment = this.assignments.find(
+      (item) => item.id === assignmentId,
+    );
     if (!assignment) return assignmentId;
 
     return `${assignment.roleType} · ${assignment.contractedHours}h`;
@@ -124,5 +137,17 @@ export class ListTasksComponent implements OnInit {
 
   protected getWeekLabel(weekId: string): string {
     return this.weeks.find((item) => item.id === weekId)?.label ?? weekId;
+  }
+
+  protected get canCreateTask(): boolean {
+    return this.tokenService.isStudent();
+  }
+
+  protected get canUpdateTaskStatus(): boolean {
+    return this.tokenService.isStudent();
+  }
+
+  protected canModifyTask(task: TaskResponse): boolean {
+    return this.tokenService.isStudent() && !task.isLateReport;
   }
 }

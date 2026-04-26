@@ -1,3 +1,3 @@
 export const environment = {
-    urlBase: 'http://localhost:8080/api/v1/'
+    urlBase: 'https://35.223.63.166.nip.io/api/v1/'
 };

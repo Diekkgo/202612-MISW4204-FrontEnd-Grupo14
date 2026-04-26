@@ -5,7 +5,11 @@
       <p>Consulta, filtra y actualiza el estado de las tareas.</p>
     </div>
 
-    <button type="button" class="primary" (click)="goToCreate()">Nueva tarea</button>
+    @if (canCreateTask) {
+      <button type="button" class="primary" (click)="goToCreate()">
+        Nueva tarea
+      </button>
+    }
   </div>
 
   <form class="card filters" [formGroup]="filtersForm" (ngSubmit)="loadTasks()">
@@ -14,7 +18,9 @@
       <select id="assignmentId" formControlName="assignmentId">
         <option value="">Todas</option>
         @for (assignment of assignments; track assignment.id) {
-          <option [value]="assignment.id">{{ getAssignmentLabel(assignment.id) }}</option>
+          <option [value]="assignment.id">
+            {{ getAssignmentLabel(assignment.id) }}
+          </option>
         }
       </select>
     </div>
@@ -31,7 +37,9 @@
 
     <div class="actions">
       <button type="submit">Buscar</button>
-      <button type="button" class="secondary" (click)="clearFilters()">Limpiar</button>
+      <button type="button" class="secondary" (click)="clearFilters()">
+        Limpiar
+      </button>
     </div>
   </form>
 
@@ -69,18 +77,30 @@
               <td>{{ getWeekLabel(task.weekId) }}</td>
               <td>{{ task.hours }}</td>
               <td>
-                <select
-                  class="status-select"
-                  [value]="task.status"
-                  (change)="updateStatus(task, $any($event.target).value)"
-                >
-                  @for (status of statusOptions; track status) {
-                    <option [value]="status">{{ status }}</option>
-                  }
-                </select>
+                @if (canModifyTask(task)) {
+                  <select
+                    class="status-select"
+                    [value]="task.status"
+                    (change)="updateStatus(task, $any($event.target).value)"
+                  >
+                    @for (status of statusOptions; track status) {
+                      <option [value]="status">{{ status }}</option>
+                    }
+                  </select>
+                } @else {
+                  <span class="status-badge">{{ task.status }}</span>
+                }
+
+                @if (task.isLateReport) {
+                  <small class="late-label">Reporte tardío</small>
+                }
               </td>
               <td>
-                <button type="button" class="table-action" (click)="goToDetail(task.id)">
+                <button
+                  type="button"
+                  class="table-action"
+                  (click)="goToDetail(task.id)"
+                >
                   Detalle
                 </button>
               </td>

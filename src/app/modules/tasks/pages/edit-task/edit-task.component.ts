@@ -2,7 +2,7 @@ import { CommonModule } from '@angular/common';
 import { Component, inject, OnInit } from '@angular/core';
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
-
+import { TokenService } from '../../../../core/services/token.service';
 import { TasksService } from '../../services/tasks.service';
 
 @Component({
@@ -10,19 +10,20 @@ import { TasksService } from '../../services/tasks.service';
   standalone: true,
   imports: [CommonModule, ReactiveFormsModule],
   templateUrl: './edit-task.component.html',
-  styleUrl: './edit-task.component.css'
+  styleUrl: './edit-task.component.css',
 })
 export class EditTaskComponent implements OnInit {
   private readonly route = inject(ActivatedRoute);
   private readonly service = inject(TasksService);
   private readonly router = inject(Router);
   private readonly fb = inject(FormBuilder);
+  private readonly tokenService = inject(TokenService);
 
   protected readonly form = this.fb.nonNullable.group({
     title: ['', Validators.required],
     description: [''],
     hours: [1, [Validators.required, Validators.min(1)]],
-    observations: ['']
+    observations: [''],
   });
 
   private taskId!: string;
@@ -32,6 +33,11 @@ export class EditTaskComponent implements OnInit {
   protected errorMessage = '';
 
   ngOnInit(): void {
+    if (!this.tokenService.isStudent()) {
+      this.router.navigate(['/tasks']);
+      return;
+    }
+
     this.taskId = this.route.snapshot.paramMap.get('id')!;
     this.loadTask();
   }
@@ -42,12 +48,20 @@ export class EditTaskComponent implements OnInit {
 
     this.service.getTaskById(this.taskId).subscribe({
       next: (task) => {
+        if (task.isLateReport) {
+          this.router.navigate(['/tasks', this.taskId], {
+            state: { errorMessage: 'Los reportes tardíos no pueden editarse.' },
+          });
+          return;
+        }
+
         this.form.patchValue({
           title: task.title,
           description: task.description,
           hours: task.hours,
-          observations: task.observations
+          observations: task.observations,
         });
+
         this.loading = false;
       },
       error: (error) => {
@@ -56,7 +70,7 @@ export class EditTaskComponent implements OnInit {
           error?.error?.error ||
           'No fue posible cargar la tarea.';
         this.loading = false;
-      }
+      },
     });
   }
 
@@ -73,7 +87,7 @@ export class EditTaskComponent implements OnInit {
     this.service.updateTask(this.taskId, this.form.getRawValue()).subscribe({
       next: () => {
         this.router.navigate(['/tasks', this.taskId], {
-          state: { successMessage: 'Tarea actualizada correctamente.' }
+          state: { successMessage: 'Tarea actualizada correctamente.' },
         });
       },
       error: (error) => {
@@ -82,7 +96,7 @@ export class EditTaskComponent implements OnInit {
           error?.error?.error ||
           'No fue posible actualizar la tarea.';
         this.saving = false;
-      }
+      },
     });
   }
 }

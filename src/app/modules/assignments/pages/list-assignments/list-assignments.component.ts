@@ -7,9 +7,12 @@ import { forkJoin } from 'rxjs';
 import { AssignmentsService } from '../../services/assignments.service';
 import { AssignmentResponse } from '../../models/assignment.model';
 import {
-  CatalogOption,
-  CatalogsService
+  CatalogOption
 } from '../../../../core/services/catalogs.service';
+import { UserService } from '../../../user/services/user.service';
+import { CourseService } from '../../../course/services/course.service';
+import { Course } from '../../../course/models/course.model';
+import { UserWithRoles } from '../../../user/models/http/users.interface';
 
 @Component({
   selector: 'app-list-assignments',
@@ -20,7 +23,8 @@ import {
 })
 export class ListAssignmentsComponent implements OnInit {
   private readonly assignmentsService = inject(AssignmentsService);
-  private readonly catalogsService = inject(CatalogsService);
+  private readonly userService = inject(UserService);
+  private readonly courseService = inject(CourseService);
   private readonly fb = inject(FormBuilder);
   private readonly router = inject(Router);
 
@@ -33,8 +37,8 @@ export class ListAssignmentsComponent implements OnInit {
   protected loading = false;
   protected errorMessage = '';
 
-  protected users: CatalogOption[] = [];
-  protected courses: CatalogOption[] = [];
+  protected users: UserWithRoles[] = [];
+  protected courses: Course[] = [];
 
   ngOnInit(): void {
     this.loadCatalogs();
@@ -43,12 +47,12 @@ export class ListAssignmentsComponent implements OnInit {
 
   protected loadCatalogs(): void {
     forkJoin({
-      users: this.catalogsService.getUsers(),
-      courses: this.catalogsService.getCourses()
+      users: this.userService.getUsers(),
+      courses: this.courseService.getCourses()
     }).subscribe({
       next: ({ users, courses }) => {
-        this.users = users;
-        this.courses = courses;
+        this.users = users.users;
+        this.courses = courses.courses;
       }
     });
   }
@@ -87,10 +91,10 @@ export class ListAssignmentsComponent implements OnInit {
   }
 
   protected getUserLabel(userId: string): string {
-    return this.users.find((item) => item.id === userId)?.label ?? userId;
+    return this.users.find((item) => item.user.id === userId)?.user.name ?? userId;
   }
 
   protected getCourseLabel(courseId: string): string {
-    return this.courses.find((item) => item.id === courseId)?.label ?? courseId;
+    return this.courses.find((item) => item.id === courseId)?.name ?? courseId;
   }
 }

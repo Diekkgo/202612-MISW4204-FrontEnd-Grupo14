@@ -1,6 +1,8 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 
 import { CreateUserComponent } from './create-user.component';
+import { provideHttpClient } from '@angular/common/http';
+import { provideRouter } from '@angular/router';
 
 describe('CreateUserComponent', () => {
   let component: CreateUserComponent;
@@ -8,7 +10,11 @@ describe('CreateUserComponent', () => {
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      imports: [CreateUserComponent]
+      imports: [CreateUserComponent],
+      providers: [
+      provideHttpClient(),
+      provideRouter([])
+    ]
     })
     .compileComponents();
 

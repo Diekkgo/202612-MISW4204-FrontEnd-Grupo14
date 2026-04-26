@@ -40,7 +40,7 @@ export class LoginComponent {
     this.authService.login(this.form.getRawValue()).subscribe({
       next: (response) => {
         this.tokenService.setSession(response);
-        this.router.navigateByUrl('/assignments');
+        this.router.navigateByUrl('/home');
       },
       error: (error: HttpErrorResponse) => {
         this.errorMessage =

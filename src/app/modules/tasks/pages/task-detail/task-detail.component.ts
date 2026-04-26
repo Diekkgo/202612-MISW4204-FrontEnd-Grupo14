@@ -4,18 +4,20 @@ import { ActivatedRoute, Router, RouterModule } from '@angular/router';
 
 import { TasksService } from '../../services/tasks.service';
 import { TaskResponse } from '../../models/task.model';
+import { TokenService } from '../../../../core/services/token.service';
 
 @Component({
   selector: 'app-task-detail',
   standalone: true,
   imports: [CommonModule, RouterModule],
   templateUrl: './task-detail.component.html',
-  styleUrl: './task-detail.component.css'
+  styleUrl: './task-detail.component.css',
 })
 export class TaskDetailComponent implements OnInit {
   private readonly route = inject(ActivatedRoute);
   private readonly service = inject(TasksService);
   private readonly router = inject(Router);
+  protected readonly tokenService = inject(TokenService);
 
   protected task?: TaskResponse;
   protected loading = false;
@@ -42,14 +44,19 @@ export class TaskDetailComponent implements OnInit {
           error?.error?.error ||
           'No fue posible cargar el detalle de la tarea.';
         this.loading = false;
-      }
+      },
     });
   }
 
   protected deleteTask(): void {
-    if (!this.task) return;
+    if (!this.task || !this.canEditOrDelete) {
+      this.errorMessage = 'No tienes permisos para eliminar esta tarea.';
+      return;
+    }
 
-    const confirmed = window.confirm(`¿Seguro que deseas eliminar la tarea "${this.task.title}"?`);
+    const confirmed = window.confirm(
+      `¿Seguro que deseas eliminar la tarea "${this.task.title}"?`,
+    );
     if (!confirmed) return;
 
     this.deleting = true;
@@ -58,7 +65,7 @@ export class TaskDetailComponent implements OnInit {
     this.service.deleteTask(this.task.id).subscribe({
       next: () => {
         this.router.navigate(['/tasks'], {
-          state: { successMessage: 'Tarea eliminada correctamente.' }
+          state: { successMessage: 'Tarea eliminada correctamente.' },
         });
       },
       error: (error) => {
@@ -67,16 +74,26 @@ export class TaskDetailComponent implements OnInit {
           error?.error?.error ||
           'No fue posible eliminar la tarea.';
         this.deleting = false;
-      }
+      },
     });
   }
 
   protected edit(): void {
-    if (!this.task) return;
+    if (!this.task || !this.canEditOrDelete) {
+      this.errorMessage = 'No tienes permisos para editar esta tarea.';
+      return;
+    }
+
     this.router.navigate(['/tasks', this.task.id, 'edit']);
   }
 
   protected goBack(): void {
     this.router.navigate(['/tasks']);
+  }
+
+  protected get canEditOrDelete(): boolean {
+    return (
+      !!this.task && this.tokenService.isStudent() && !this.task.isLateReport
+    );
   }
 }

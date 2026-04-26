@@ -13,9 +13,13 @@ import {
   CreateAssignmentRequest
 } from '../../models/assignment.model';
 import {
-  CatalogOption,
-  CatalogsService
+  CatalogOption
 } from '../../../../core/services/catalogs.service';
+import { UserService } from '../../../user/services/user.service';
+import { CourseService } from '../../../course/services/course.service';
+import { CourseReponse } from '../../../course/models/http/courses.interface';
+import { Course } from '../../../course/models/course.model';
+import { UserWithRoles } from '../../../user/models/http/users.interface';
 
 @Component({
   selector: 'app-create-assignment',
@@ -27,7 +31,8 @@ import {
 export class CreateAssignmentComponent implements OnInit {
   private readonly fb = inject(FormBuilder);
   private readonly assignmentsService = inject(AssignmentsService);
-  private readonly catalogsService = inject(CatalogsService);
+  private readonly userService = inject(UserService);
+  private readonly courseService = inject(CourseService);
 
   protected readonly roleOptions: AssignmentRoleType[] = ['MONITOR', 'ASSISTANT'];
 
@@ -38,8 +43,8 @@ export class CreateAssignmentComponent implements OnInit {
     contractedHours: [1, [Validators.required, Validators.min(1)]]
   });
 
-  protected users: CatalogOption[] = [];
-  protected courses: CatalogOption[] = [];
+  protected users: UserWithRoles[] = [];
+  protected courses: Course[] = [];
 
   protected loading = false;
   protected loadingCatalogs = false;
@@ -54,12 +59,12 @@ export class CreateAssignmentComponent implements OnInit {
     this.loadingCatalogs = true;
 
     forkJoin({
-      users: this.catalogsService.getUsers(),
-      courses: this.catalogsService.getCourses()
+      users: this.userService.getUsers(),
+      courses: this.courseService.getCourses()
     }).subscribe({
       next: ({ users, courses }) => {
-        this.users = users;
-        this.courses = courses;
+        this.users = users.users;
+        this.courses = courses.courses;
         this.loadingCatalogs = false;
       },
       error: () => {
