@@ -17,8 +17,8 @@
       <label for="userId">Usuario</label>
       <select id="userId" formControlName="userId">
         <option value="">Selecciona un usuario</option>
-        @for (user of users; track user.id) {
-          <option [value]="user.id">{{ user.label }}</option>
+        @for (user of users; track user.user.id) {
+          <option [value]="user.user.id">{{ user.user.name }}</option>
         }
       </select>
       @if (hasError('userId')) {
@@ -31,7 +31,7 @@
       <select id="courseId" formControlName="courseId">
         <option value="">Selecciona un curso</option>
         @for (course of courses; track course.id) {
-          <option [value]="course.id">{{ course.label }}</option>
+          <option [value]="course.id">{{ course.name }}</option>
         }
       </select>
       @if (hasError('courseId')) {

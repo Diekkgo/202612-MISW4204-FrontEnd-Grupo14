@@ -19,7 +19,7 @@
       <div class="detail-grid">
         <div class="detail-item">
           <span class="label">Descripción</span>
-          <p>{{ task.description || 'Sin descripción.' }}</p>
+          <p>{{ task.description || "Sin descripción." }}</p>
         </div>
 
         <div class="detail-item">
@@ -34,26 +34,37 @@
 
         <div class="detail-item">
           <span class="label">Observaciones</span>
-          <p>{{ task.observations || 'Sin observaciones.' }}</p>
+          <p>{{ task.observations || "Sin observaciones." }}</p>
         </div>
 
         <div class="detail-item">
           <span class="label">Creada en</span>
-          <p>{{ task.createdAt | date:'medium' }}</p>
+          <p>{{ task.createdAt | date: "medium" }}</p>
         </div>
 
         <div class="detail-item">
           <span class="label">Actualizada en</span>
-          <p>{{ task.updatedAt | date:'medium' }}</p>
+          <p>{{ task.updatedAt | date: "medium" }}</p>
         </div>
       </div>
-
-      <div class="actions">
-        <button type="button" (click)="edit()">Editar</button>
-        <button type="button" class="danger" [disabled]="deleting" (click)="deleteTask()">
-          {{ deleting ? 'Eliminando...' : 'Eliminar' }}
-        </button>
-      </div>
+      @if (task.isLateReport) {
+        <div class="alert warning">
+          Esta tarea corresponde a un reporte tardío y no puede modificarse.
+        </div>
+      }
+      @if (canEditOrDelete) {
+        <div class="actions">
+          <button type="button" (click)="edit()">Editar</button>
+          <button
+            type="button"
+            class="danger"
+            [disabled]="deleting"
+            (click)="deleteTask()"
+          >
+            {{ deleting ? "Eliminando..." : "Eliminar" }}
+          </button>
+        </div>
+      }
     </div>
   }
 </section>
