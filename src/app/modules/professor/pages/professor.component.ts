@@ -53,10 +53,9 @@ export class ProfessorComponent implements OnInit {
     if (user) {
       this.professorId = user.id;
     }
-    
+
+    this.loadWeeks();    
     this.loadPeople();
-    this.loadWeeks();
-    this.loadTasks();
   }
 
   loadPeople(): void {
@@ -78,6 +77,7 @@ export class ProfessorComponent implements OnInit {
 
   loadTasks(): void {
     if (!this.professorId) return;
+    
     this.professorViewService.getTasksByProfessor(this.selectedWeekId, this.professorId).subscribe(data => {
       this.tasks = data;
     });
@@ -133,6 +133,7 @@ export class ProfessorComponent implements OnInit {
   }
 
   openTasksModal(): void {
+    this.loadTasks();
     this.showTasksModal = true;
   }
 
