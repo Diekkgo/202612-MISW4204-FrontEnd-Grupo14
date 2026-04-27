@@ -1,5 +1,3 @@
-//model
-
 export interface Student {
   UserID: string;
   Name: string;
