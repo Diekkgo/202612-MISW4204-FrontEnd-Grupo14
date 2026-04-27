@@ -66,10 +66,14 @@ export class ListAssignmentsComponent implements OnInit {
           ? courses
           : (courses.courses ?? []);
 
-        this.users = usersList.map((user: any) => ({
-          id: user.id,
-          label: user.name ?? user.email ?? user.id,
-        }));
+        this.users = usersList.map((item: any) => {
+            const user = item.user ?? item;
+
+            return {
+              id: user.id,
+              label: user.name ?? user.email ?? user.id,
+            };
+          });
 
         this.courses = coursesList.map((course: any) => ({
           id: course.id,
