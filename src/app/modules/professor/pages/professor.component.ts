@@ -1,3 +1,5 @@
+//component
+
 import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
@@ -26,8 +28,8 @@ export class ProfessorComponent implements OnInit {
   supervisedPeople: Student[] = [];
   filteredPeople: Student[] = [];
   courses: Course[] = [];
-  weeklyDetail: WeeklyDetail | null = null;
-  summary: PersonSummary | null = null;
+  weeklyDetail: WeeklyDetail[] = [];
+  summary: PersonSummary[] = [];
   tasks: ProfessorTaskView[] = [];
   reportedVsContracted: ReportedVsContracted[] = [];
   weeks: Weeks[] = [];
@@ -53,10 +55,9 @@ export class ProfessorComponent implements OnInit {
     if (user) {
       this.professorId = user.id;
     }
-    
+
+    this.loadWeeks();    
     this.loadPeople();
-    this.loadWeeks();
-    this.loadTasks();
   }
 
   loadPeople(): void {
@@ -78,6 +79,7 @@ export class ProfessorComponent implements OnInit {
 
   loadTasks(): void {
     if (!this.professorId) return;
+    
     this.professorViewService.getTasksByProfessor(this.selectedWeekId, this.professorId).subscribe(data => {
       this.tasks = data;
     });
@@ -117,7 +119,8 @@ export class ProfessorComponent implements OnInit {
     if (!this.selectedWeekId) return;
 
     this.professorViewService.getWeeklyDetail(person.UserID).subscribe(data => {
-      this.weeklyDetail = data;
+      this.weeklyDetail = data; 
+      
       this.showWeeklyDetailModal = true;
     });
   }
@@ -133,6 +136,7 @@ export class ProfessorComponent implements OnInit {
   }
 
   openTasksModal(): void {
+    this.loadTasks();
     this.showTasksModal = true;
   }
 
