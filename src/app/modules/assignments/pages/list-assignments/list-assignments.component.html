@@ -15,8 +15,8 @@
       <label for="userId">Usuario</label>
       <select id="userId" formControlName="userId">
         <option value="">Todos</option>
-        @for (user of users; track user.user.id) {
-          <option [value]="user.user.id">{{ user.user.name }}</option>
+        @for (user of users; track user.id) {
+          <option [value]="user.id">{{ user.label }}</option>
         }
       </select>
     </div>
@@ -26,7 +26,7 @@
       <select id="courseId" formControlName="courseId">
         <option value="">Todos</option>
         @for (course of courses; track course.id) {
-          <option [value]="course.id">{{ course.name }}</option>
+          <option [value]="course.id">{{ course.label }}</option>
         }
       </select>
     </div>

@@ -2,7 +2,7 @@ import { CommonModule } from '@angular/common';
 import { Component, OnInit, inject } from '@angular/core';
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
-import { forkJoin } from 'rxjs';
+import { catchError, forkJoin, of } from 'rxjs';
 
 import { TasksService } from '../../services/tasks.service';
 import { TaskStatus } from '../../models/task.model';
@@ -65,17 +65,28 @@ export class CreateTaskComponent implements OnInit {
     this.loadingCatalogs = true;
 
     forkJoin({
-      assignments: this.assignmentsService.getAssignments(),
-      weeks: this.catalogsService.getWeeks(),
+      assignments: this.assignmentsService.getAssignments().pipe(
+        catchError(() => {
+          console.warn('No se pudieron cargar las asignaciones');
+          return of([]);
+        }),
+      ),
+      weeks: this.catalogsService.getWeeks().pipe(
+        catchError(() => {
+          console.warn('No se pudieron cargar las semanas');
+          return of([]);
+        }),
+      ),
     }).subscribe({
       next: ({ assignments, weeks }) => {
         this.assignments = assignments;
         this.weeks = weeks;
         this.loadingCatalogs = false;
-      },
-      error: () => {
-        this.errorMessage = 'No fue posible cargar asignaciones y semanas.';
-        this.loadingCatalogs = false;
+
+        if (!assignments.length || !weeks.length) {
+          this.errorMessage =
+            'Algunos catálogos no pudieron cargarse. Puedes intentar refrescar la página.';
+        }
       },
     });
   }
