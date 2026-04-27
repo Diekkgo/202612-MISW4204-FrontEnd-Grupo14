@@ -41,16 +41,16 @@ export class ProfessorService {
         return this.http.get<Weeks[]>(`${this.apiUrl}weeks`, { headers: this.headers });
     }
 
-    getWeeklyDetail(userId: string): Observable<WeeklyDetail> {
+    getWeeklyDetail(userId: string): Observable<WeeklyDetail[]> {
         this.headers = this.createHeaders();
 
-        return this.http.get<WeeklyDetail>(`${this.apiUrl}professors/user/${userId}/weeks`, { headers: this.headers });
+        return this.http.get<WeeklyDetail[]>(`${this.apiUrl}professors/user/${userId}/weeks`, { headers: this.headers });
     }
 
-    getConsolidated(userId: string): Observable<PersonSummary> {
+    getConsolidated(userId: string): Observable<PersonSummary[]> {
         this.headers = this.createHeaders();
 
-        return this.http.get<PersonSummary>(`${this.apiUrl}professors/user/${userId}/consolidated-report`, { headers: this.headers });
+        return this.http.get<PersonSummary[]>(`${this.apiUrl}professors/user/${userId}/consolidated-report`, { headers: this.headers });
     }
 
     getTasksByProfessor(weekId: string, professorId: string): Observable<ProfessorTaskView[]> {

@@ -29,12 +29,10 @@ export interface WeeklyTaskView {
 }
 
 export interface WeeklyDetail {
-  userId: string;
-  name: string;
-  weekStartDate: string;
-  weekEndDate: string;
-  tasks: WeeklyTaskView[];
-  totalReportedHours: number;
+  WeekID: string;
+  IsLate: string;
+  TotalHours: number;
+  Status: string;
 }
 
 export interface AssignmentSummaryItem {
@@ -45,14 +43,18 @@ export interface AssignmentSummaryItem {
 }
 
 export interface PersonSummary {
-  userId: string;
-  name: string;
-  weeksReported: number;
-  totalReportedHours: number;
-  totalExpectedHours: number;
-  differenceHours: number;
-  compliancePercentage: number;
-  byAssignment: AssignmentSummaryItem[];
+  WeekID: string;
+  IsLate: string;
+  TotalHours: number;
+  Status: string;
+  // userId: string;
+  // name: string;
+  // weeksReported: number;
+  // totalReportedHours: number;
+  // totalExpectedHours: number;
+  // differenceHours: number;
+  // compliancePercentage: number;
+  // byAssignment: AssignmentSummaryItem[];
 }
 
 export interface ProfessorTaskView {

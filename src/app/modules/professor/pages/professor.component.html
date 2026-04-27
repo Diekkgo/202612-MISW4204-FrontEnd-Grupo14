@@ -108,33 +108,27 @@
 <div class="modal-backdrop" *ngIf="showWeeklyDetailModal">
   <div class="modal-container modal-xl">
     <div class="modal-header">
-      <h2>Detalle semanal de {{ weeklyDetail?.name }}</h2>
+      <h2>Detalle semanal de {{ this.selectedPersonName }}</h2>
       <button class="btn-close" (click)="closeModals()">×</button>
     </div>
     <div class="modal-body">
-      <p class="info-line">
-        Semana: {{ weeklyDetail?.weekStartDate }} a {{ weeklyDetail?.weekEndDate }}
-      </p>
-
       <table class="main-table">
         <thead>
           <tr>
-            <th>Vinculación</th>
-            <th>Tarea</th>
-            <th>Descripción</th>
+            <th>Semana</th>
+            <th>Retraso</th>
             <th>Horas</th>
             <th>Estado</th>
           </tr>
         </thead>
         <tbody>
-          <tr *ngFor="let task of weeklyDetail?.tasks">
-            <td>{{ task.assignmentName }}</td>
-            <td>{{ task.title }}</td>
-            <td>{{ task.description }}</td>
-            <td>{{ task.hours }}</td>
-            <td>{{ task.status }}</td>
+          <tr *ngFor="let detail of weeklyDetail">
+            <td>{{ detail.WeekID }}</td>
+            <td>{{ detail.IsLate ? "Sí" : "No" }}</td>
+            <td>{{ detail.TotalHours }}</td>
+            <td>{{ detail.Status }}</td>
           </tr>
-          <tr *ngIf="!weeklyDetail?.tasks || weeklyDetail?.tasks?.length === 0">
+          <tr *ngIf="!weeklyDetail || weeklyDetail.length === 0">
             <td colspan="6" class="empty-row">
               No hay tareas registradas.
             </td>
@@ -142,9 +136,9 @@
         </tbody>
       </table>
 
-      <div class="summary-box">
-        Total horas reportadas: <strong>{{ weeklyDetail?.totalReportedHours }}</strong>
-      </div>
+      <!-- <div class="summary-box">
+        Total horas reportadas: <strong>{{ weeklyDetail.reduce((sum, detail) => sum + detail.TotalHours, 0) }}</strong>
+      </div> -->
     </div>
   </div>
 </div>
@@ -153,46 +147,44 @@
 <div class="modal-backdrop" *ngIf="showSummaryModal">
   <div class="modal-container modal-lg">
     <div class="modal-header">
-      <h2>Vista consolidada de {{ summary?.name }}</h2>
+      <h2>Vista consolidada de {{ selectedPersonName }}</h2>
       <button class="btn-close" (click)="closeModals()">×</button>
     </div>
     <div class="modal-body">
       <div class="summary-grid">
         <div class="summary-card">
           <span>Semanas reportadas</span>
-          <strong>{{ summary?.weeksReported }}</strong>
+          <strong>{{ summary.length }}</strong>
         </div>
         <div class="summary-card">
           <span>Horas reportadas</span>
-          <strong>{{ summary?.totalReportedHours }}</strong>
+          <strong>{{ summary[0].TotalHours }}</strong>
         </div>
         <div class="summary-card">
           <span>Horas esperadas</span>
-          <strong>{{ summary?.totalExpectedHours }}</strong>
+          <strong>{{ 40 }}</strong>
         </div>
         <div class="summary-card">
           <span>Cumplimiento</span>
-          <strong>{{ summary?.compliancePercentage }}%</strong>
+          <strong>{{ summary[0].TotalHours / 40}}%</strong>
         </div>
       </div>
 
       <table class="main-table">
         <thead>
           <tr>
-            <th>Vinculación</th>
+            <th>Semana</th>
             <th>Reportadas</th>
-            <th>Esperadas</th>
-            <th>Diferencia</th>
+            <th>Retraso</th>
           </tr>
         </thead>
         <tbody>
-          <tr *ngFor="let item of summary?.byAssignment">
-            <td>{{ item.assignmentName }}</td>
-            <td>{{ item.reportedHours }}</td>
-            <td>{{ item.expectedHours }}</td>
-            <td>{{ item.reportedHours - item.expectedHours }}</td>
+          <tr *ngFor="let item of summary">
+            <td>{{ item.WeekID }}</td>
+            <td>{{ item.TotalHours }}</td>
+            <td>{{ item.IsLate ? "Sí" : "No" }}</td>
           </tr>
-          <tr *ngIf="!summary?.byAssignment || summary?.byAssignment?.length === 0">
+          <tr *ngIf="!summary || summary.length === 0">
             <td colspan="6" class="empty-row">
               No hay datos para mostrar.
             </td>

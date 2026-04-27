@@ -26,8 +26,8 @@ export class ProfessorComponent implements OnInit {
   supervisedPeople: Student[] = [];
   filteredPeople: Student[] = [];
   courses: Course[] = [];
-  weeklyDetail: WeeklyDetail | null = null;
-  summary: PersonSummary | null = null;
+  weeklyDetail: WeeklyDetail[] = [];
+  summary: PersonSummary[] = [];
   tasks: ProfessorTaskView[] = [];
   reportedVsContracted: ReportedVsContracted[] = [];
   weeks: Weeks[] = [];
@@ -117,7 +117,8 @@ export class ProfessorComponent implements OnInit {
     if (!this.selectedWeekId) return;
 
     this.professorViewService.getWeeklyDetail(person.UserID).subscribe(data => {
-      this.weeklyDetail = data;
+      this.weeklyDetail = data; 
+      
       this.showWeeklyDetailModal = true;
     });
   }
