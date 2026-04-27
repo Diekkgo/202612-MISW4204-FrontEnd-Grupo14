@@ -1,25 +1,25 @@
 import { CommonModule } from '@angular/common';
 import { Component, OnInit, inject } from '@angular/core';
 import { FormBuilder, ReactiveFormsModule } from '@angular/forms';
-import { Router, RouterModule } from '@angular/router';
-import { forkJoin } from 'rxjs';
+import { catchError, forkJoin, map, of } from 'rxjs';
 
 import { AssignmentsService } from '../../services/assignments.service';
 import { AssignmentResponse } from '../../models/assignment.model';
-import {
-  CatalogOption
-} from '../../../../core/services/catalogs.service';
 import { UserService } from '../../../user/services/user.service';
 import { CourseService } from '../../../course/services/course.service';
-import { Course } from '../../../course/models/course.model';
-import { UserWithRoles } from '../../../user/models/http/users.interface';
+import { Router, RouterModule } from '@angular/router';
+
+interface CatalogOption {
+  id: string;
+  label: string;
+}
 
 @Component({
   selector: 'app-list-assignments',
   standalone: true,
   imports: [CommonModule, ReactiveFormsModule, RouterModule],
   templateUrl: './list-assignments.component.html',
-  styleUrl: './list-assignments.component.css'
+  styleUrl: './list-assignments.component.css',
 })
 export class ListAssignmentsComponent implements OnInit {
   private readonly assignmentsService = inject(AssignmentsService);
@@ -30,15 +30,15 @@ export class ListAssignmentsComponent implements OnInit {
 
   protected readonly filtersForm = this.fb.nonNullable.group({
     userId: [''],
-    courseId: ['']
+    courseId: [''],
   });
+
+  protected users: CatalogOption[] = [];
+  protected courses: CatalogOption[] = [];
 
   protected assignments: AssignmentResponse[] = [];
   protected loading = false;
   protected errorMessage = '';
-
-  protected users: UserWithRoles[] = [];
-  protected courses: Course[] = [];
 
   ngOnInit(): void {
     this.loadCatalogs();
@@ -47,13 +47,35 @@ export class ListAssignmentsComponent implements OnInit {
 
   protected loadCatalogs(): void {
     forkJoin({
-      users: this.userService.getUsers(),
-      courses: this.courseService.getCourses()
+      users: this.userService.getUsers().pipe(
+        catchError(() => {
+          console.warn('No se pudieron cargar los usuarios');
+          return of({ users: [], total: 0 });
+        }),
+      ),
+      courses: this.courseService.getCourses().pipe(
+        catchError(() => {
+          console.warn('No se pudieron cargar los cursos');
+          return of({ courses: [], total: 0 });
+        }),
+      ),
     }).subscribe({
       next: ({ users, courses }) => {
-        this.users = users.users;
-        this.courses = courses.courses;
-      }
+        const usersList = Array.isArray(users) ? users : (users.users ?? []);
+        const coursesList = Array.isArray(courses)
+          ? courses
+          : (courses.courses ?? []);
+
+        this.users = usersList.map((user: any) => ({
+          id: user.id,
+          label: user.name ?? user.email ?? user.id,
+        }));
+
+        this.courses = coursesList.map((course: any) => ({
+          id: course.id,
+          label: `${course.name} (${course.type})`,
+        }));
+      },
     });
   }
 
@@ -74,27 +96,29 @@ export class ListAssignmentsComponent implements OnInit {
           error?.error?.error ||
           'No fue posible consultar las asignaciones.';
         this.loading = false;
-      }
+      },
     });
   }
 
   protected clearFilters(): void {
     this.filtersForm.reset({
       userId: '',
-      courseId: ''
+      courseId: '',
     });
     this.loadAssignments();
   }
 
-  protected goToCreate(): void {
-    this.router.navigate(['/assignments/create']);
-  }
-
   protected getUserLabel(userId: string): string {
-    return this.users.find((item) => item.user.id === userId)?.user.name ?? userId;
+    return this.users.find((user) => user.id === userId)?.label ?? userId;
   }
 
   protected getCourseLabel(courseId: string): string {
-    return this.courses.find((item) => item.id === courseId)?.name ?? courseId;
+    return (
+      this.courses.find((course) => course.id === courseId)?.label ?? courseId
+    );
+  }
+
+  protected goToCreate(): void {
+    this.router.navigate(['/assignments/create']);
   }
 }

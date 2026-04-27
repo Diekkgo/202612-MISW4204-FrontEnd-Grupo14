@@ -1,32 +1,27 @@
 import { CommonModule } from '@angular/common';
 import { Component, OnInit, inject } from '@angular/core';
-import {
-  FormBuilder,
-  ReactiveFormsModule,
-  Validators
-} from '@angular/forms';
-import { forkJoin } from 'rxjs';
+import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
+import { catchError, forkJoin, map, of } from 'rxjs';
 
 import { AssignmentsService } from '../../services/assignments.service';
 import {
   AssignmentRoleType,
-  CreateAssignmentRequest
+  CreateAssignmentRequest,
 } from '../../models/assignment.model';
-import {
-  CatalogOption
-} from '../../../../core/services/catalogs.service';
 import { UserService } from '../../../user/services/user.service';
 import { CourseService } from '../../../course/services/course.service';
-import { CourseReponse } from '../../../course/models/http/courses.interface';
-import { Course } from '../../../course/models/course.model';
-import { UserWithRoles } from '../../../user/models/http/users.interface';
+
+interface CatalogOption {
+  id: string;
+  label: string;
+}
 
 @Component({
   selector: 'app-create-assignment',
   standalone: true,
   imports: [CommonModule, ReactiveFormsModule],
   templateUrl: './create-assignment.component.html',
-  styleUrl: './create-assignment.component.css'
+  styleUrl: './create-assignment.component.css',
 })
 export class CreateAssignmentComponent implements OnInit {
   private readonly fb = inject(FormBuilder);
@@ -34,17 +29,20 @@ export class CreateAssignmentComponent implements OnInit {
   private readonly userService = inject(UserService);
   private readonly courseService = inject(CourseService);
 
-  protected readonly roleOptions: AssignmentRoleType[] = ['MONITOR', 'ASSISTANT'];
+  protected readonly roleOptions: AssignmentRoleType[] = [
+    'MONITOR',
+    'ASSISTANT',
+  ];
 
   protected readonly form = this.fb.nonNullable.group({
     userId: ['', [Validators.required]],
     courseId: ['', [Validators.required]],
     roleType: ['MONITOR' as AssignmentRoleType, [Validators.required]],
-    contractedHours: [1, [Validators.required, Validators.min(1)]]
+    contractedHours: [1, [Validators.required, Validators.min(1)]],
   });
 
-  protected users: UserWithRoles[] = [];
-  protected courses: Course[] = [];
+  protected users: CatalogOption[] = [];
+  protected courses: CatalogOption[] = [];
 
   protected loading = false;
   protected loadingCatalogs = false;
@@ -56,21 +54,36 @@ export class CreateAssignmentComponent implements OnInit {
   }
 
   protected loadCatalogs(): void {
-    this.loadingCatalogs = true;
-
     forkJoin({
-      users: this.userService.getUsers(),
-      courses: this.courseService.getCourses()
+      users: this.userService.getUsers().pipe(
+        catchError(() => {
+          console.warn('No se pudieron cargar los usuarios');
+          return of({ users: [], total: 0 });
+        }),
+      ),
+      courses: this.courseService.getCourses().pipe(
+        catchError(() => {
+          console.warn('No se pudieron cargar los cursos');
+          return of({ courses: [], total: 0 });
+        }),
+      ),
     }).subscribe({
       next: ({ users, courses }) => {
-        this.users = users.users;
-        this.courses = courses.courses;
-        this.loadingCatalogs = false;
+        const usersList = Array.isArray(users) ? users : (users.users ?? []);
+        const coursesList = Array.isArray(courses)
+          ? courses
+          : (courses.courses ?? []);
+
+        this.users = usersList.map((user: any) => ({
+          id: user.id,
+          label: user.name ?? user.email ?? user.id,
+        }));
+
+        this.courses = coursesList.map((course: any) => ({
+          id: course.id,
+          label: `${course.name} (${course.type})`,
+        }));
       },
-      error: () => {
-        this.errorMessage = 'No fue posible cargar usuarios y cursos.';
-        this.loadingCatalogs = false;
-      }
     });
   }
 
@@ -89,7 +102,7 @@ export class CreateAssignmentComponent implements OnInit {
       userId: this.form.getRawValue().userId,
       courseId: this.form.getRawValue().courseId,
       roleType: this.form.getRawValue().roleType,
-      contractedHours: Number(this.form.getRawValue().contractedHours)
+      contractedHours: Number(this.form.getRawValue().contractedHours),
     };
 
     this.assignmentsService.createAssignment(payload).subscribe({
@@ -99,7 +112,7 @@ export class CreateAssignmentComponent implements OnInit {
           userId: '',
           courseId: '',
           roleType: 'MONITOR',
-          contractedHours: 1
+          contractedHours: 1,
         });
         this.loading = false;
       },
@@ -109,11 +122,13 @@ export class CreateAssignmentComponent implements OnInit {
           error?.error?.error ||
           'No fue posible crear la asignación.';
         this.loading = false;
-      }
+      },
     });
   }
 
-  protected hasError(controlName: 'userId' | 'courseId' | 'roleType' | 'contractedHours'): boolean {
+  protected hasError(
+    controlName: 'userId' | 'courseId' | 'roleType' | 'contractedHours',
+  ): boolean {
     const control = this.form.get(controlName);
     return !!control && control.invalid && (control.touched || control.dirty);
   }
