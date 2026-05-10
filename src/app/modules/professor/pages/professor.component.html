@@ -123,7 +123,7 @@
         </thead>
         <tbody>
           <tr *ngFor="let detail of weeklyDetail">
-            <td>{{ detail.WeekID }}</td>
+            <td>{{ detail.StartDate | date:'dd/MM/yyyy':'UTC' }} a {{ detail.EndDate | date:'dd/MM/yyyy':'UTC' }}</td>
             <td>{{ detail.IsLate ? "Sí" : "No" }}</td>
             <td>{{ detail.TotalHours }}</td>
             <td>{{ detail.Status }}</td>
@@ -154,19 +154,19 @@
       <div class="summary-grid">
         <div class="summary-card">
           <span>Semanas reportadas</span>
-          <strong>{{ summary.length }}</strong>
+          <strong>{{ !summary || !summary.length ? 0 : summary.length }}</strong>
         </div>
         <div class="summary-card">
           <span>Horas reportadas</span>
-          <strong>{{ summary[0].TotalHours }}</strong>
+          <strong>{{ !summary || !summary.length ? 0 : summary[0].TotalHours }}</strong>
         </div>
         <div class="summary-card">
           <span>Horas esperadas</span>
-          <strong>{{ 40 }}</strong>
+          <strong>{{ !summary || !summary.length ? 0 : 40 }}</strong>
         </div>
         <div class="summary-card">
           <span>Cumplimiento</span>
-          <strong>{{ summary[0].TotalHours / 40}}%</strong>
+          <strong>{{ !summary || !summary.length ? 0 : (summary[0].TotalHours / 40) * 100 }}%</strong>
         </div>
       </div>
 
@@ -180,7 +180,7 @@
         </thead>
         <tbody>
           <tr *ngFor="let item of summary">
-            <td>{{ item.WeekID }}</td>
+            <td>{{ item.StartDate | date:'dd/MM/yyyy':'UTC' }} a {{ item.EndDate | date:'dd/MM/yyyy':'UTC' }}</td>
             <td>{{ item.TotalHours }}</td>
             <td>{{ item.IsLate ? "Sí" : "No" }}</td>
           </tr>
