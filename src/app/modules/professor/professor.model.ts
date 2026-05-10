@@ -30,6 +30,8 @@ export interface WeeklyTaskView {
 
 export interface WeeklyDetail {
   WeekID: string;
+  StartDate: string;
+  EndDate: string;
   IsLate: string;
   TotalHours: number;
   Status: string;
@@ -45,6 +47,8 @@ export interface AssignmentSummaryItem {
 export interface PersonSummary {
   WeekID: string;
   IsLate: string;
+  StartDate: string;
+  EndDate: string;
   TotalHours: number;
   Status: string;
   // userId: string;
